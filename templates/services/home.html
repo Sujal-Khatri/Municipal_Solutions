@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Welcome to Municipal Solutions</h1>
+{% if user.is_authenticated %}
+    <p>Hello, {{ user.username }}!</p>
+    {% if user.is_admin %}
+        <div class="alert alert-info">
+            You have admin privileges. <a href="/admin/">Access admin panel</a>
+        </div>
+    {% endif %}
+{% else %}
+    <p>Please <a href="{% url 'login' %}">login</a> or <a href="{% url 'register' %}">register</a> to access services.</p>
+{% endif %}
+
+<a href="{% url 'discussions' %}" class="btn btn-primary mt-3">Discussions</a>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Community Discussions</h1>
+
+{% if user.is_authenticated %}
+    <a href="{% url 'create_post' %}" class="btn btn-success mb-3">Create New Post</a>
+{% endif %}
+
+<div class="list-group">
+    {% for post in posts %}
+    <div class="list-group-item">
+        <h5>{{ post.title }}</h5>
+        <p>{{ post.content }}</p>
+        <small class="text-muted">
+            Posted by {{ post.author.username }} on {{ post.created_at }}
+            {% if user == post.author or user.is_admin %}
+                <a href="{% url 'delete_post' post.id %}" class="text-danger ms-2">Delete</a>
+            {% endif %}
+        </small>
+    </div>
+    {% empty %}
+    <div class="list-group-item">No discussions yet.</div>
+    {% endfor %}
+</div>
+{% endblock %}

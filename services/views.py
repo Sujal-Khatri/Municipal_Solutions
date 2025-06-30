@@ -3,6 +3,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import DiscussionPost
 from .forms import DiscussionPostForm
+from django.views.decorators.cache import never_cache
+from django.contrib.auth.decorators import login_required
+
+@never_cache
+@login_required
+def dashboard(request):
+    # your view logic
+    return render(request, 'dashboard.html')
 
 def discussions(request):
     posts = DiscussionPost.objects.all().order_by('-created_at')

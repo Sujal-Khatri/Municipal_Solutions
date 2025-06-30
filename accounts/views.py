@@ -5,6 +5,14 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from .forms import CustomUserCreationForm
+from django.views.decorators.cache import never_cache
+from django.contrib.auth.decorators import login_required
+
+@never_cache
+@login_required
+def dashboard(request):
+    # your view logic
+    return render(request, 'dashboard.html')
 
 def register(request):
     if request.method == 'POST':

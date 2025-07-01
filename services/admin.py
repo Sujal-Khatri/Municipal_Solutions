@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import DiscussionPost
+from .models import DiscussionPost, PostReaction
 from django.utils.html import format_html
 
 @admin.register(DiscussionPost)
@@ -21,3 +21,5 @@ class DiscussionPostAdmin(admin.ModelAdmin):
             return format_html('<a href="{}" target="_blank">View Map</a>', url)
         return "-"
     map_link.short_description = "Location"
+
+admin.site.register(PostReaction)    

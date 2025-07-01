@@ -19,10 +19,11 @@
                     <img src="https://via.placeholder.com/150" class="img-thumbnail" alt="No Image">
                 {% endif %}
             </div>
+            
 
             <!-- Content + Map -->
             <div class="col-md-9">
-                <h5>{{ post.title }}</h5>
+                <h5><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h5>
                 <p>{{ post.content|truncatechars:150 }}</p>
                 <small class="text-muted d-block mb-2">
                     Posted by {{ post.author.username }} on {{ post.created_at|date:"M d, Y H:i" }}
@@ -32,15 +33,7 @@
                 </small>
 
                 {% if post.location %}
-                    <div id="map-{{ forloop.counter }}" style="height: 150px;" class="rounded"></div>
-                    <script>
-                        (function() {
-                            var coords = "{{ post.location }}".split(',');
-                            var map = L.map("map-{{ forloop.counter }}").setView([coords[0], coords[1]], 15);
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-                            L.marker([coords[0], coords[1]]).addTo(map);
-                        })();
-                    </script>
+                    <div id="map-{{ forloop.counter }}" class="rounded" style="height: 150px;"></div>
                 {% endif %}
             </div>
         </div>
@@ -50,8 +43,31 @@
     {% endfor %}
 </div>
 
-<!-- Leaflet scripts loaded once -->
+<!-- Load Leaflet once -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+<!-- Initialize All Maps After DOM Loads 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        {% for post in posts %}
+            {% if post.location %}
+                const coords{{ forloop.counter }} = "{{ post.location|escapejs }}".split(',');
+                const map{{ forloop.counter }} = L.map("map-{{ forloop.counter }}", {
+                    center: [parseFloat(coords{{ forloop.counter }}[0]), parseFloat(coords{{ forloop.counter }}[1])],
+                    zoom: 14,
+                    scrollWheelZoom: false,
+                    zoomControl: false,
+                    dragging: false,
+                    attributionControl: false,
+                });
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map{{ forloop.counter }});
+                L.marker([parseFloat(coords{{ forloop.counter }}[0]), parseFloat(coords{{ forloop.counter }}[1])])
+                    .addTo(map{{ forloop.counter }});
+            {% endif %}
+        {% endfor %}
+    });
+</script>-->
 {% endblock %}

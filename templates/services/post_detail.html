@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4">
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.content }}</p>
+    <p><strong>Posted by:</strong> {{ post.author.username }} on {{ post.created_at|date:"M d, Y H:i" }}</p>
+    
+    {% if post.image %}
+        <img src="{{ post.image.url }}" class="img-fluid mt-3" alt="Post Image">
+    {% endif %}
+
+    {% if post.location %}
+        <p><strong>Location:</strong> {{ post.location }}</p>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+    {% if user.is_authenticated %}
+    {% if user_reaction %}
+        <p>You {{ user_reaction.reaction }}d this post.</p>
+    {% else %}
+        <form method="post" action="{% url 'like_post' post.id %}">
+            {% csrf_token %}
+            <button name="vote" value="like" class="btn btn-success me-2">👍 Like ({{ post.likes }})</button>
+            <button name="vote" value="dislike" class="btn btn-danger">👎 Dislike ({{ post.dislikes }})</button>
+        </form>
+    {% endif %}
+{% endif %}
+    
+{% else %}
+    <p><i>You must <a href="{% url 'login' %}">log in</a> to like or dislike posts.</i></p>
+{% endif %}
+
+    <a href="{% url 'discussions' %}" class="btn btn-secondary mt-3">⬅ Back</a>
+</div>
+{% endblock %}

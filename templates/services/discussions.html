@@ -9,18 +9,49 @@
 
 <div class="list-group">
     {% for post in posts %}
-    <div class="list-group-item">
-        <h5>{{ post.title }}</h5>
-        <p>{{ post.content }}</p>
-        <small class="text-muted">
-            Posted by {{ post.author.username }} on {{ post.created_at }}
-            {% if user == post.author or user.is_admin %}
-                <a href="{% url 'delete_post' post.id %}" class="text-danger ms-2">Delete</a>
-            {% endif %}
-        </small>
+    <div class="list-group-item mb-3 p-3 rounded shadow-sm">
+        <div class="row">
+            <!-- Thumbnail Image -->
+            <div class="col-md-3 mb-2 mb-md-0">
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" class="img-thumbnail" style="max-height: 150px;">
+                {% else %}
+                    <img src="https://via.placeholder.com/150" class="img-thumbnail" alt="No Image">
+                {% endif %}
+            </div>
+
+            <!-- Content + Map -->
+            <div class="col-md-9">
+                <h5>{{ post.title }}</h5>
+                <p>{{ post.content|truncatechars:150 }}</p>
+                <small class="text-muted d-block mb-2">
+                    Posted by {{ post.author.username }} on {{ post.created_at|date:"M d, Y H:i" }}
+                    {% if user == post.author or user.is_admin %}
+                        <a href="{% url 'delete_post' post.id %}" class="text-danger ms-2">Delete</a>
+                    {% endif %}
+                </small>
+
+                {% if post.location %}
+                    <div id="map-{{ forloop.counter }}" style="height: 150px;" class="rounded"></div>
+                    <script>
+                        (function() {
+                            var coords = "{{ post.location }}".split(',');
+                            var map = L.map("map-{{ forloop.counter }}").setView([coords[0], coords[1]], 15);
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                            L.marker([coords[0], coords[1]]).addTo(map);
+                        })();
+                    </script>
+                {% endif %}
+            </div>
+        </div>
     </div>
     {% empty %}
     <div class="list-group-item">No discussions yet.</div>
     {% endfor %}
 </div>
+
+<!-- Leaflet scripts loaded once -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 {% endblock %}

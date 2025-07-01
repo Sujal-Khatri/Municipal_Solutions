@@ -19,7 +19,7 @@ def discussions(request):
 @login_required
 def create_post(request):
     if request.method == 'POST':
-        form = DiscussionPostForm(request.POST)
+        form = DiscussionPostForm(request.POST , request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user

@@ -31,6 +31,16 @@ def post_detail(request, pk):
         'post': post,
         'user_reaction': user_reaction
     })
+def service_page(request):
+    services = [
+        {"title": "Waste Collection", "desc": "Schedule pickups, track waste disposal, and get eco-tips."},
+        {"title": "Water Services", "desc": "Report issues, view billing, and manage usage."},
+        {"title": "Property Tax", "desc": "View bills, pay online, and download receipts."},
+        {"title": "Public Parks", "desc": "Find parks, facilities, and events near you."},
+        {"title": "Road Maintenance", "desc": "Report potholes, construction updates, and work schedules."},
+        {"title": "Permit Applications", "desc": "Apply for permits for events, businesses, and construction."}
+    ]
+    return render(request, 'services/service_page.html', {'services': services})
 
 @login_required
 def create_post(request):

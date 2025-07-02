@@ -3,7 +3,6 @@
 {% block content %}
 <h1>Welcome to Municipal Solutions</h1>
 {% if user.is_authenticated %}
-    <p>Hello, {{ user.username }}!</p>
     {% if user.is_admin %}
         <div class="alert alert-info">
             You have admin privileges. <a href="/admin/">Access admin panel</a>

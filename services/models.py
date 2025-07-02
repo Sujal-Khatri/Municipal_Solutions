@@ -29,4 +29,4 @@ class PostReaction(models.Model):
         unique_together = ('user', 'post')  # Ensures one vote per user per post
 
     def __str__(self):
-        return self.title
+        return f"{self.user.username} - {self.reaction} on Post ID {self.post.id}"

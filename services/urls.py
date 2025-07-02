@@ -1,4 +1,5 @@
 from django.urls import path
+from .views import service_page
 from . import views
 
 urlpatterns = [
@@ -8,4 +9,5 @@ urlpatterns = [
     path('discussions/<int:pk>/', views.post_detail, name='post_detail'),
     path('discussions/<int:pk>/react/', views.like_post, name='like_post'),
     path('discussions/delete/<int:post_id>/', views.delete_post, name='delete_post'),
+    path('services/', service_page, name='service_page'),
 ]

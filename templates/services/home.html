@@ -1,35 +1,68 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Welcome to Municipal Solutions</h1>
-{% if user.is_authenticated %}
-    {% if user.is_admin %}
-        <div class="alert alert-info">
-            You have admin privileges. <a href="/admin/">Access admin panel</a>
-        </div>
+<div class="container mt-4 text-center">
+    <h1 class="mb-4">Welcome to Municipal Solutions</h1>
+
+    {% if user.is_authenticated %}
+        {% if user.is_admin %}
+            <div class="alert alert-info">
+                You have admin privileges. <a href="/admin/">Access admin panel</a>
+            </div>
+        {% endif %}
+    {% else %}
+        <p>Please <a href="{% url 'login' %}">login</a> or <a href="{% url 'register' %}">register</a> to access services.</p>
     {% endif %}
-{% else %}
-    <p>Please <a href="{% url 'login' %}">login</a> or <a href="{% url 'register' %}">register</a> to access services.</p>
-{% endif %}
 
-<a href="{% url 'discussions' %}" class="btn btn-primary mt-3">Discussions</a>
-<h2 class="text-center mt-4">📢 Latest Discussions</h2>
-
-<div class="scroll-box">
-    <div class="scroll-content">
-        {% for post in latest_posts %}
-        <div class="scroll-item">
-            <strong>{{ post.title }}</strong><br>
-            <small>By {{ post.author.username }} | {{ post.created_at|date:"M d, Y H:i" }}</small><br>
-            <a href="{% url 'post_detail' post.id %}">View Post →</a>
+    <!-- 🔵 Big Buttons as Cards -->
+    <div class="row justify-content-center g-4 mb-5">
+        <!-- 🗨️ Discussions -->
+        <div class="col-md-5">
+            <a href="{% url 'discussions' %}" class="text-decoration-none">
+                <div class="card shadow-lg h-100 p-4 border-0 hover-zoom">
+                    <div class="card-body">
+                        <h3 class="card-title text-primary">🗨️ Join Discussions</h3>
+                        <p class="card-text text-muted">View and share concerns, updates, and ideas.</p>
+                        <button class="btn btn-primary btn-lg mt-2">Discussions</button>
+                    </div>
+                </div>
+            </a>
         </div>
-        {% empty %}
-        <p>No discussions available.</p>
-        {% endfor %}
+
+        <!-- 🏛️ Services -->
+        <div class="col-md-5">
+            <a href="{% url 'service_page' %}" class="text-decoration-none">
+                <div class="card shadow-lg h-100 p-4 border-0 hover-zoom">
+                    <div class="card-body">
+                        <h3 class="card-title text-primary">🏛️ Municipal Services</h3>
+                        <p class="card-text text-muted">Explore local services like water, taxes, permits, and more.</p>
+                        <button class="btn btn-primary btn-lg mt-2">Explore Services</button>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 📢 Latest Discussions Section -->
+    <h2 class="text-center">📢 Latest Discussions</h2>
+    <div class="scroll-box mx-auto mt-3">
+        <div class="scroll-content">
+            {% for post in latest_posts %}
+                <div class="scroll-item">
+                    <strong>{{ post.title }}</strong><br>
+                    <small>By {{ post.author.username }} | {{ post.created_at|date:"M d, Y H:i" }}</small><br>
+                    <a href="{% url 'post_detail' post.id %}">View Post →</a>
+                </div>
+            {% empty %}
+                <p>No discussions available.</p>
+            {% endfor %}
+        </div>
     </div>
 </div>
+
 <style>
 .scroll-box {
+    max-width: 600px;
     height: 200px;
     overflow: hidden;
     border: 2px solid #ccc;
@@ -55,8 +88,14 @@
     0% { transform: translateY(0); }
     100% { transform: translateY(-100%); }
 }
+
 .scroll-box:hover .scroll-content {
     animation-play-state: paused;
+}
+
+.hover-zoom:hover {
+    transform: scale(1.03);
+    transition: transform 0.3s ease;
 }
 </style>
 {% endblock %}

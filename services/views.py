@@ -18,6 +18,8 @@ def discussions(request):
 
 def post_detail(request, pk):
     post = get_object_or_404(DiscussionPost, pk=pk)
+     # 🧪 DEBUG PRINT — confirm location field
+    print("Location from DB:", post.location)
     user_reaction = None
     if request.user.is_authenticated:
         user_reaction = PostReaction.objects.filter(post=post, user=request.user).first()
@@ -29,14 +31,25 @@ def post_detail(request, pk):
 @login_required
 def create_post(request):
     if request.method == 'POST':
-        form = DiscussionPostForm(request.POST , request.FILES)
+        form = DiscussionPostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
+
+            # 📍 Capture location properly
+            location_val = request.POST.get('location') or request.POST.get('id_location')
+            print("📍 Raw location from POST:", location_val)
+
+            if location_val:
+                post.location = location_val
+            else:
+                print("⚠️ Warning: Location field was empty!")
+
             post.save()
             return redirect('discussions')
     else:
-        form = DiscussionPostForm()
+        form = DiscussionPostForm()  # ✅ Fix: initialize form in GET request
+
     return render(request, 'services/create_post.html', {'form': form})
 
 @login_required

@@ -3,11 +3,16 @@
 {% block content %}
 <h1>Create New Discussion Post</h1>
 
+{# ⚠️ REMOVE location from as_p and insert it manually #}
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
+    
+    {% for field in form %}
+        {% if field.name != 'location' %}
+            <p>{{ field.label_tag }} {{ field }}</p>
+        {% endif %}
+    {% endfor %}
 
-    <!-- Hidden input for storing map location if not rendered by {{ form.as_p }} -->
     <input type="hidden" id="id_location" name="location">
 
     <button type="submit" class="btn btn-primary">Submit</button>
@@ -17,38 +22,54 @@
 <h5>Select Location on Map (Kathmandu)</h5>
 <div id="map" style="height: 400px; margin-bottom: 20px;"></div>
 
-<!-- Leaflet CSS & JS -->
+<!-- ✅ Leaflet CSS & JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-<!-- Kathmandu-Restricted Map -->
+<!-- ✅ This JS should go AFTER Leaflet is loaded -->
 <script>
-    const minLat = 27.6, maxLat = 27.8;
-    const minLng = 85.25, maxLng = 85.38;
+    // Wait until page is fully loaded
+    window.addEventListener('load', function () {
+        const locationInput = document.getElementById("id_location");
+        const form = document.querySelector("form");
 
-    var map = L.map('map').setView([27.7172, 85.3240], 13);  // Kathmandu center
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    var marker;
-
-    map.on('click', function(e) {
-        var lat = e.latlng.lat;
-        var lng = e.latlng.lng;
-
-        if (lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng) {
-            if (marker) {
-                marker.setLatLng(e.latlng);
-            } else {
-                marker = L.marker(e.latlng).addTo(map);
+        // Prevent form submission if location is empty
+        form.addEventListener("submit", function (event) {
+            if (!locationInput.value) {
+                alert("⚠️ Please select a location on the map.");
+                event.preventDefault();
             }
+        });
 
-            document.getElementById("id_location").value = lat + "," + lng;
-        } else {
-            alert("❌ Please select a location within Kathmandu.");
-        }
+        // Map bounds for Kathmandu
+        const minLat = 27.6, maxLat = 27.8;
+        const minLng = 85.25, maxLng = 85.38;
+
+        const map = L.map('map').setView([27.7172, 85.3240], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker;
+
+        map.on('click', function (e) {
+            const lat = e.latlng.lat.toFixed(6);
+            const lng = e.latlng.lng.toFixed(6);
+
+            if (lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng) {
+                if (marker) {
+                    marker.setLatLng(e.latlng);
+                } else {
+                    marker = L.marker(e.latlng).addTo(map);
+                }
+
+                locationInput.value = `${lat},${lng}`;
+                console.log("📌 Location set:", locationInput.value);
+            } else {
+                alert("❌ Please click inside Kathmandu city bounds.");
+            }
+        });
     });
 </script>
 {% endblock %}

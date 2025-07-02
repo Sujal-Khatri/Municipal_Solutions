@@ -23,7 +23,7 @@
         <button type="submit" class="nav-link btn btn-link" style="padding: 10; color: white; text-decoration: none;">Logout</button>
     </form>
                 {% if user.is_admin %}
-                    <a class="nav-link" href="/admin/"style="padding: 10; color: white; text-decoration: none;">Admin Panel</a>
+                    <a class="nav-link" href="/admin/"style="padding: 11; color: white; text-decoration: none;">Admin Panel</a>
                 {% endif %}
             {% else %}
                 <a class="nav-link" href="{% url 'login' %}">Login</a>

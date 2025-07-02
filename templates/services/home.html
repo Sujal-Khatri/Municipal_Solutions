@@ -14,4 +14,50 @@
 {% endif %}
 
 <a href="{% url 'discussions' %}" class="btn btn-primary mt-3">Discussions</a>
+<h2 class="text-center mt-4">📢 Latest Discussions</h2>
+
+<div class="scroll-box">
+    <div class="scroll-content">
+        {% for post in latest_posts %}
+        <div class="scroll-item">
+            <strong>{{ post.title }}</strong><br>
+            <small>By {{ post.author.username }} | {{ post.created_at|date:"M d, Y H:i" }}</small><br>
+            <a href="{% url 'post_detail' post.id %}">View Post →</a>
+        </div>
+        {% empty %}
+        <p>No discussions available.</p>
+        {% endfor %}
+    </div>
+</div>
+<style>
+.scroll-box {
+    height: 200px;
+    overflow: hidden;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #fdfdfd;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.scroll-content {
+    display: flex;
+    flex-direction: column;
+    animation: scrollUp 20s linear infinite;
+}
+
+.scroll-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+@keyframes scrollUp {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-100%); }
+}
+.scroll-box:hover .scroll-content {
+    animation-play-state: paused;
+}
+</style>
 {% endblock %}

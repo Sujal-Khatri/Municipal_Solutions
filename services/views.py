@@ -7,9 +7,13 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 
 @never_cache
-
+def home(request):
+    latest_posts = DiscussionPost.objects.order_by('-created_at')[:5]
+    return render(request, 'services/home.html', {'latest_posts': latest_posts})
 def dashboard(request):
     # your view logic
+    #latest_posts = DiscussionPost.objects.order_by('-created_at')[:5]
+    #return render(request, 'services/home.html', {'latest_posts': latest_posts})
     return render(request, 'dashboard.html')
 
 def discussions(request):
@@ -59,8 +63,8 @@ def delete_post(request, post_id):
         post.delete()
     return redirect('discussions')
 
-def home(request):
-    return render(request, 'services/home.html')
+#def home(request):
+    #return render(request, 'services/home.html')
 
 @login_required
 def like_post(request, pk):

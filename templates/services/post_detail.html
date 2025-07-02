@@ -1,69 +1,78 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="card p-4">
-    <h2>{{ post.title }}</h2>
-    <p>{{ post.content }}</p>
-    <p><strong>Posted by:</strong> {{ post.author.username }} on {{ post.created_at|date:"M d, Y H:i" }}</p>
 
-    <div class="row my-3">
-        {% if post.image %}
-        <div class="col-md-6">
-            <img src="{{ post.image.url }}" class="img-fluid rounded" style="max-height: 200px;" alt="Post Image">
-        </div>
-        {% endif %}
+<div class="container py-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h2 class="card-title mb-3 text-primary">{{ post.title }}</h2>
+            <p class="card-text">{{ post.content }}</p>
 
-        {% if post.location %}
-        <div class="col-md-6">
-            <div id="post-map" style="height: 200px;" class="rounded shadow-sm"></div>
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    var coords = "{{ post.location }}".split(',');
-                    var map = L.map('post-map').setView([coords[0], coords[1]], 14);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap contributors'
-                    }).addTo(map);
-                    L.marker([coords[0], coords[1]]).addTo(map);
-                });
-            </script>
+            <hr>
+
+            <p class="text-muted">
+                <strong>Posted by:</strong> {{ post.author.username }} <br>
+                <small>{{ post.created_at|date:"F d, Y H:i" }}</small>
+            </p>
+
+            <div class="row g-4 mt-3">
+                {% if post.image %}
+                <div class="col-md-6">
+                    <img src="{{ post.image.url }}" class="img-fluid rounded border" style="max-height: 250px;" alt="Post Image">
+                </div>
+                {% endif %}
+
+                {% if post.location %}
+                <div class="col-md-6">
+                    <div id="post-map" class="rounded border" style="height: 250px;"></div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="mt-4">
+                {% if user.is_authenticated %}
+                    {% if user_reaction %}
+                        <p class="text-info">You <strong>{{ user_reaction.reaction }}</strong>d this post.</p>
+                    {% else %}
+                        <form method="post" action="{% url 'like_post' post.id %}">
+                            {% csrf_token %}
+                            <button name="vote" value="like" class="btn btn-outline-success me-2">
+                                👍 Like ({{ post.likes }})
+                            </button>
+                            <button name="vote" value="dislike" class="btn btn-outline-danger">
+                                👎 Dislike ({{ post.dislikes }})
+                            </button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted mt-3">
+                        <i>You must <a href="{% url 'login' %}">log in</a> to react to this post.</i>
+                    </p>
+                {% endif %}
+            </div>
+
+            <a href="{% url 'discussions' %}" class="btn btn-secondary mt-4">⬅ Back to Discussions</a>
         </div>
-        {% endif %}
     </div>
-
-    {% if user.is_authenticated %}
-        {% if user_reaction %}
-            <p>You {{ user_reaction.reaction }}d this post.</p>
-        {% else %}
-            <form method="post" action="{% url 'like_post' post.id %}">
-                {% csrf_token %}
-                <button name="vote" value="like" class="btn btn-success me-2">👍 Like ({{ post.likes }})</button>
-                <button name="vote" value="dislike" class="btn btn-danger">👎 Dislike ({{ post.dislikes }})</button>
-            </form>
-        {% endif %}
-    {% else %}
-        <p><i>You must <a href="{% url 'login' %}">log in</a> to like or dislike posts.</i></p>
-    {% endif %}
-
-    <a href="{% url 'discussions' %}" class="btn btn-secondary mt-3">⬅ Back</a>
 </div>
 
-<!-- Leaflet CSS and JS -->
+<!-- Leaflet CSS & JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 {% if post.location %}
 <script>
-    const loc = "{{ post.location|default:'' }}";
-    if (loc.includes(",")) {
-        const coords = loc.split(",");
-        const lat = parseFloat(coords[0]);
-        const lng = parseFloat(coords[1]);
-
-        const map = L.map('map').setView([lat, lng], 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-        L.marker([lat, lng]).addTo(map);
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const loc = "{{ post.location|default:'' }}";
+        if (loc.includes(',')) {
+            const coords = loc.split(',');
+            const map = L.map('post-map').setView([coords[0], coords[1]], 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            L.marker([coords[0], coords[1]]).addTo(map);
+        }
+    });
 </script>
 {% endif %}
+
 {% endblock %}

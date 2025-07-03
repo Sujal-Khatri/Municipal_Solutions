@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import DiscussionPost, PostReaction
+from .models import DiscussionPost, PostReaction, Notice
 from .forms import DiscussionPostForm
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
@@ -15,6 +15,14 @@ def dashboard(request):
     #latest_posts = DiscussionPost.objects.order_by('-created_at')[:5]
     #return render(request, 'services/home.html', {'latest_posts': latest_posts})
     return render(request, 'dashboard.html')
+#for notices
+def home(request):
+    latest_posts = DiscussionPost.objects.order_by('-created_at')[:5]
+    notices = Notice.objects.all()[:10]
+    return render(request, 'services/home.html', {
+        'latest_posts': latest_posts,
+        'notices': notices
+    })
 
 def discussions(request):
     posts = DiscussionPost.objects.all().order_by('-created_at')

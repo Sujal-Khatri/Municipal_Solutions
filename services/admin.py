@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import DiscussionPost, PostReaction
+from .models import DiscussionPost, PostReaction, Notice
 from django.utils.html import format_html
 
 @admin.register(DiscussionPost)
@@ -23,3 +23,5 @@ class DiscussionPostAdmin(admin.ModelAdmin):
     map_link.short_description = "Location"
 
 admin.site.register(PostReaction)    
+
+admin.site.register(Notice)

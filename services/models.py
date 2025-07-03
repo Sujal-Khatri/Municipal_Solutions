@@ -30,3 +30,14 @@ class PostReaction(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.reaction} on Post ID {self.post.id}"
+
+class Notice(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title    

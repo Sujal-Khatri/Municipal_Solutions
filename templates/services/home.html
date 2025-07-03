@@ -98,4 +98,37 @@
     transition: transform 0.3s ease;
 }
 </style>
+
+ <!-- for notice board -->
+<h2 class="text-center mt-5">📌 Notice Board</h2>
+<div class="notice-board mt-3">
+    <ul class="notice-list">
+        {% for notice in notices %}
+            <li>
+                <strong>{{ notice.title }}</strong><br>
+                <small>{{ notice.created_at|date:"M d, Y H:i" }}</small><br>
+                <p>{{ notice.content|truncatewords:25 }}</p>
+            </li>
+        {% empty %}
+            <li>No notices available.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<style>
+.notice-board {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    background: #fffefc;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+.notice-list li {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ccc;
+}
+</style>
 {% endblock %}

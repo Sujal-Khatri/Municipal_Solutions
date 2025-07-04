@@ -6,6 +6,7 @@ class CustomUser(AbstractUser):
     is_admin = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20, blank=True)
     address = models.TextField(blank=True)
+    email = models.EmailField(unique=True)
     
     def __str__(self):
         return self.username

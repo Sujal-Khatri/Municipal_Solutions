@@ -1,14 +1,92 @@
 {% extends 'base.html' %}
 
+{% block extra_head %}
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
+<div class="container my-5">
+  <div class="row justify-content-center">
     <div class="col-md-6">
-        <h2>Register</h2>
-        <form method="post">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">Create an Account</h2>
+
+          <form id="registerForm" method="post" novalidate>
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
+            {{ form.non_field_errors }}
+
+            {% for field in form %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  {{ field.label }}
+                </label>
+                {{ field }}
+                <div class="invalid-feedback"></div>
+              </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary w-100">
+              Register
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function(){
+  const form = document.getElementById('registerForm');
+  const pwd1 = form.querySelector('[name="password1"]');
+  const pwd2 = form.querySelector('[name="password2"]');
+
+  // Clear feedback on input
+  form.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', () => {
+      input.classList.remove('is-invalid','is-valid');
+      input.closest('.mb-3')
+           .querySelector('.invalid-feedback')
+           .textContent = '';
+    });
+  });
+
+  // Password‐match check
+  pwd2.addEventListener('input', () => {
+    if (pwd2.value !== pwd1.value) {
+      pwd2.setCustomValidity('Passwords do not match.');
+    } else {
+      pwd2.setCustomValidity('');
+    }
+  });
+
+  form.addEventListener('submit', function(event) {
+    // run HTML5 validation
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      // show each field’s built-in message
+      form.querySelectorAll('input').forEach(input => {
+        const feedback = input.closest('.mb-3')
+                              .querySelector('.invalid-feedback');
+        if (!input.checkValidity()) {
+          feedback.textContent = input.validationMessage;
+          input.classList.add('is-invalid');
+        } else {
+          input.classList.add('is-valid');
+        }
+      });
+    }
+    // if the form _is_ valid, let it submit normally;
+    // your server‐side will still catch anything that slips through.
+  }, false);
+})();
+</script>
 {% endblock %}

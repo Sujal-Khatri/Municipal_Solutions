@@ -7,6 +7,12 @@ from django.shortcuts import redirect
 from .forms import CustomUserCreationForm
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
+from .forms import StyledAuthenticationForm
+
+class MyLoginView(LoginView):
+    authentication_form = StyledAuthenticationForm
+    template_name = 'accounts/login.html'
 
 @never_cache
 @login_required

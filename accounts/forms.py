@@ -2,6 +2,7 @@
 import re
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
 from .models import CustomUser
 
 class CustomUserCreationForm(UserCreationForm):
@@ -67,3 +68,17 @@ class CustomUserCreationForm(UserCreationForm):
         if CustomUser.objects.filter(email=email).exists():
             raise forms.ValidationError("Email already in use.")
         return email
+
+class StyledAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(widget=forms.TextInput({
+        'class':       'form-control',
+        'id':          'id_username',
+        'placeholder': 'Username',
+        'required':    'required'
+    }))
+    password = forms.CharField(widget=forms.PasswordInput({
+        'class':       'form-control',
+        'id':          'id_password',
+        'placeholder': 'Password',
+        'required':    'required'
+    }))

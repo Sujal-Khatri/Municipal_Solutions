@@ -10,4 +10,5 @@ urlpatterns = [
     path('discussions/<int:pk>/react/', views.like_post, name='like_post'),
     path('discussions/delete/<int:post_id>/', views.delete_post, name='delete_post'),
     path('services/', service_page, name='service_page'),
+    path('reports/', views.reports, name='reports'),
 ]

@@ -41,3 +41,12 @@ class Notice(models.Model):
 
     def __str__(self):
         return self.title    
+    
+class Report(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    file = models.FileField(upload_to='reports/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

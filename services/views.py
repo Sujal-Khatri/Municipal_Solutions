@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import DiscussionPost, PostReaction, Notice
+from .models import DiscussionPost, PostReaction, Notice, Report
 from .forms import DiscussionPostForm
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
@@ -23,6 +23,10 @@ def home(request):
         'latest_posts': latest_posts,
         'notices': notices
     })
+#for reports
+def reports(request):
+    all_reports = Report.objects.order_by('-created_at')[:10]
+    return render(request, 'services/reports.html', {'reports': all_reports})
 
 def discussions(request):
     posts = DiscussionPost.objects.all().order_by('-created_at')

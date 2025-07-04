@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import DiscussionPost, PostReaction, Notice
+from .models import DiscussionPost, PostReaction, Notice, Report
 from django.utils.html import format_html
 
 @admin.register(DiscussionPost)
@@ -25,3 +25,5 @@ class DiscussionPostAdmin(admin.ModelAdmin):
 admin.site.register(PostReaction)    
 
 admin.site.register(Notice)
+
+admin.site.register(Report)

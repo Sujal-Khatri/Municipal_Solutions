@@ -1,48 +1,47 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-4">
-  <h2>{{ request.user.username }}</h2>
-  <p><strong>Email:</strong> {{ request.user.email }}</p>
+  <h1>My Profile</h1>
 
-  <div class="row mt-4">
-    <div class="col-md-6">
-      <div class="card mb-4">
-        <div class="card-header">
-          Your Posts
-        </div>
-        <ul class="list-group list-group-flush">
-          {% for post in posts %}
-            <li class="list-group-item">
-              <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
-              <br>
-              <small class="text-muted">{{ post.created_at|date:"M d, Y" }}</small>
-            </li>
-          {% empty %}
-            <li class="list-group-item">You haven't written any posts yet.</li>
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="card mb-4">
-        <div class="card-header">
-          Your Reactions
-        </div>
-        <div class="card-body">
-          <p><strong>Likes given:</strong> {{ likes_count }}</p>
-          <p><strong>Dislikes given:</strong> {{ dislikes_count }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card bg-light">
+  <div class="card mb-4">
     <div class="card-body">
-      <!-- placeholder for future profile widgets -->
-      <h5>Coming Soon</h5>
-      <p>More personal settings, stats, etc.</p>
+      <h4>{{ user.username }}</h4>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <p><strong>Phone:</strong> {{ user.phone_number }}</p>
+      <p><strong>Location:</strong> {{ user.profile.location }}</p>
+      <!-- future fields -->
+      {# <p><strong>Something else:</strong> {{ user.profile.some_future_field }}</p> #}
+      <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
     </div>
   </div>
-</div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <h3>My Posts</h3>
+      {% for post in posts %}
+        <div class="card mb-2">
+          <div class="card-body">
+            <a href="{% url 'post_detail' post.id %}"><strong>{{ post.title }}</strong></a>
+            <span class="float-end text-muted small">{{ post.created_at|date:"M d, Y" }}</span>
+          </div>
+        </div>
+      {% empty %}
+        <p>No posts yet.</p>
+      {% endfor %}
+    </div>
+
+    <div class="col-md-6">
+      <h3>My Reactions</h3>
+      {% for r in reactions %}
+        <div class="card mb-2">
+          <div class="card-body">
+            You {{ r.reaction }}d 
+            <a href="{% url 'post_detail' r.post.id %}">{{ r.post.title }}</a>
+            <span class="float-end text-muted small">{{ r.created_at|date:"M d, Y" }}</span>
+          </div>
+        </div>
+      {% empty %}
+        <p>No likes/dislikes yet.</p>
+      {% endfor %}
+    </div>
+  </div>
 {% endblock %}

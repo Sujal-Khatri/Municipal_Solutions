@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>{{ request.user.username }}</h2>
+  <p><strong>Email:</strong> {{ request.user.email }}</p>
+
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          Your Posts
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for post in posts %}
+            <li class="list-group-item">
+              <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
+              <br>
+              <small class="text-muted">{{ post.created_at|date:"M d, Y" }}</small>
+            </li>
+          {% empty %}
+            <li class="list-group-item">You haven't written any posts yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          Your Reactions
+        </div>
+        <div class="card-body">
+          <p><strong>Likes given:</strong> {{ likes_count }}</p>
+          <p><strong>Dislikes given:</strong> {{ dislikes_count }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-light">
+    <div class="card-body">
+      <!-- placeholder for future profile widgets -->
+      <h5>Coming Soon</h5>
+      <p>More personal settings, stats, etc.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

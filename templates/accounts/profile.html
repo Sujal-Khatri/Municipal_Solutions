@@ -8,8 +8,15 @@
       <p><strong>Email:</strong> {{ user.email }}</p>
       <p><strong>Phone:</strong> {{ user.phone_number }}</p>
       <p><strong>Location:</strong> {{ user.profile.location }}</p>
+
+      <hr>
+
+      <p><strong>Total Likes:</strong> {{ likes_count }}</p>
+      <p><strong>Total Dislikes:</strong> {{ dislikes_count }}</p>
+
       <!-- future fields -->
       {# <p><strong>Something else:</strong> {{ user.profile.some_future_field }}</p> #}
+
       <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
     </div>
   </div>
@@ -20,8 +27,12 @@
       {% for post in posts %}
         <div class="card mb-2">
           <div class="card-body">
-            <a href="{% url 'post_detail' post.id %}"><strong>{{ post.title }}</strong></a>
-            <span class="float-end text-muted small">{{ post.created_at|date:"M d, Y" }}</span>
+            <a href="{% url 'post_detail' post.id %}">
+              <strong>{{ post.title }}</strong>
+            </a>
+            <span class="float-end text-muted small">
+              {{ post.created_at|date:"M d, Y" }}
+            </span>
           </div>
         </div>
       {% empty %}
@@ -36,7 +47,7 @@
           <div class="card-body">
             You {{ r.reaction }}d 
             <a href="{% url 'post_detail' r.post.id %}">{{ r.post.title }}</a>
-            <span class="float-end text-muted small">{{ r.created_at|date:"M d, Y" }}</span>
+            
           </div>
         </div>
       {% empty %}

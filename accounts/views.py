@@ -58,12 +58,12 @@ def user_login(request):
 def profile(request):
     user = request.user
     posts = DiscussionPost.objects.filter(author=user).order_by('-created_at')
-    reactions = PostReaction.objects.filter(user=user)
+    reactions = PostReaction.objects.filter(user=request.user).order_by('-id')
     likes_count = reactions.filter(reaction='like').count()
     dislikes_count = reactions.filter(reaction='dislike').count()
-
     return render(request, 'accounts/profile.html', {
         'posts': posts,
+        'reactions': reactions,
         'likes_count': likes_count,
         'dislikes_count': dislikes_count,
     })

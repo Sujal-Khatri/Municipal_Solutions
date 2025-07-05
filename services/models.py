@@ -24,6 +24,7 @@ class PostReaction(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     post = models.ForeignKey(DiscussionPost, on_delete=models.CASCADE)
     reaction = models.CharField(max_length=7, choices=VOTE_CHOICES)
+    
 
     class Meta:
         unique_together = ('user', 'post')  # Ensures one vote per user per post

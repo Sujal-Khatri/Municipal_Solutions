@@ -1,0 +1,29 @@
+/* static/css/style.css */
+
+/* 1) Navbar gradient background */
+.navbar {
+  background: linear-gradient(90deg, #004080, #0066cc);
+}
+
+/* 2) Logo sizing & spacing */
+.navbar-brand img {
+  height: 32px;      /* fits most navbars */
+  margin-right: 8px;
+}
+
+/* 3) Make nav-links pop on hover */
+.nav-link {
+  transition: background-color 0.2s, color 0.2s;
+}
+.nav-link:hover {
+  background-color: rgba(255,255,255,0.15);
+  border-radius: 4px;
+}
+
+/* 4) Toggler button color (for mobile) */
+.navbar-toggler {
+  border-color: rgba(255,255,255,0.7);
+}
+.navbar-toggler-icon {
+  filter: invert(1);
+}

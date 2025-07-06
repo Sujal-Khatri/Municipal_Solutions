@@ -11,4 +11,6 @@ urlpatterns = [
     path('discussions/delete/<int:post_id>/', views.delete_post, name='delete_post'),
     path('services/', service_page, name='service_page'),
     path('reports/', views.reports, name='reports'),
+    path('gallery/left/', views.gallery_left, name='gallery_left'),
+    path('gallery/right/', views.gallery_right, name='gallery_right'),
 ]

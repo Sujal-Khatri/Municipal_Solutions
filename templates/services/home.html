@@ -1,136 +1,160 @@
-
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-4 text-center">
-    <h1 class="mb-4">Welcome to Municipal Solutions</h1>
+  <h1 class="mb-4">Welcome to Municipal Solutions</h1>
 
-    {% if user.is_authenticated %}
-        {% if user.is_admin %}
-            <div class="alert alert-info">
-                You have admin privileges. <a href="/admin/">Access admin panel</a>
-            </div>
-        {% endif %}
-    {% else %}
-        <p>Please <a href="{% url 'login' %}">login</a> or <a href="{% url 'register' %}">register</a> to access services.</p>
+  {% if user.is_authenticated %}
+    {% if user.is_admin %}
+      <div class="alert alert-info">
+        You have admin privileges. <a href="/admin/">Access admin panel</a>
+      </div>
     {% endif %}
+  {% else %}
+    <p>Please <a href="{% url 'login' %}">login</a> or <a href="{% url 'register' %}">register</a> to access services.</p>
+  {% endif %}
 
-    <!-- 🔵 Big Buttons as Cards -->
-<div class="row justify-content-center g-4 mb-5">
-  <!-- 🗨️ Discussions -->
-  <div class="col-md-5">
-    <a href="{% url 'discussions' %}" class="text-decoration-none">
-      <div class="card home-card home-card-discussions shadow-lg h-100 p-4 border-0 hover-zoom">
-        <div class="overlay"></div>
-        <div class="card-body">
-          
-          <button class="btn btn-primary btn-lg mt-2">Discussions</button>
+  <!-- 🔵 Big Buttons as Cards -->
+  <div class="row justify-content-center g-4 mb-5">
+    <div class="col-md-5">
+      <a href="{% url 'discussions' %}" class="text-decoration-none">
+        <div class="card home-card home-card-discussions shadow-lg h-100 p-4 border-0 hover-zoom">
+          <div class="overlay"></div>
+          <div class="card-body">
+            <button class="btn btn-primary btn-lg mt-2">Discussions</button>
+          </div>
         </div>
-      </div>
-    </a>
-  </div>
-
-  <!-- 🏛️ Services -->
-  <div class="col-md-5">
-    <a href="{% url 'service_page' %}" class="text-decoration-none">
-      <div class="card home-card home-card-services shadow-lg h-100 p-4 border-0 hover-zoom">
-        <div class="overlay"></div>
-        <div class="card-body">
-          
-          <button class="btn btn-primary btn-lg mt-2">Explore Services</button>
-        </div>
-      </div>
-    </a>
-  </div>
-</div>
-
-
-    <!-- 📢 Latest Discussions Section -->
-    <h2 class="text-center">📢 Latest Discussions</h2>
-    <div class="scroll-box mx-auto mt-3">
-        <div class="scroll-content">
-            {% for post in latest_posts %}
-                <div class="scroll-item">
-                    <strong>{{ post.title }}</strong><br>
-                    <small>By {{ post.author.username }} | {{ post.created_at|date:"M d, Y H:i" }}</small><br>
-                    <a href="{% url 'post_detail' post.id %}">View Post →</a>
-                </div>
-            {% empty %}
-                <p>No discussions available.</p>
-            {% endfor %}
-        </div>
+      </a>
     </div>
+    <div class="col-md-5">
+      <a href="{% url 'service_page' %}" class="text-decoration-none">
+        <div class="card home-card home-card-services shadow-lg h-100 p-4 border-0 hover-zoom">
+          <div class="overlay"></div>
+          <div class="card-body">
+            <button class="btn btn-primary btn-lg mt-2">Explore Services</button>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 📢 Latest Discussions with side‐gallery slots -->
+  <h2 class="text-center">📢 Latest Discussions</h2>
+  <div class="row align-items-start mt-3">
+    <!-- left gallery slot (hidden xs/sm) -->
+    <div class="col-md-2 d-none d-md-block text-center">
+      <a href="{% url 'gallery_left' %}">
+        <img src="{% static 'css/img/gallery_left.jpg' %}"
+             class="img-fluid rounded gallery-thumb mb-3"
+             alt="Left gallery">
+      </a>
+    </div>
+
+    <!-- center: scrolling discussions -->
+    <div class="col-12 col-md-8">
+      <div class="scroll-box mx-auto">
+        <div class="scroll-content">
+          {% for post in latest_posts %}
+            <div class="scroll-item">
+              <strong>{{ post.title }}</strong><br>
+              <small>
+                By {{ post.author.username }}
+                | {{ post.created_at|date:"M d, Y H:i" }}
+              </small><br>
+              <a href="{% url 'post_detail' post.id %}">View Post →</a>
+            </div>
+          {% empty %}
+            <p>No discussions available.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- right gallery slot (hidden xs/sm) -->
+    <div class="col-md-2 d-none d-md-block text-center">
+      <a href="{% url 'gallery_right' %}">
+        <img src="{% static 'css/img/gallery_right.jpg' %}"
+             class="img-fluid rounded gallery-thumb mb-3"
+             alt="Right gallery">
+      </a>
+    </div>
+  </div>
+
+  <!-- 📌 Notice Board -->
+  <h2 class="text-center mt-5">📌 Notice Board</h2>
+  <div class="notice-board mt-3">
+    <ul class="notice-list">
+      {% for notice in notices %}
+        <li>
+          <strong>{{ notice.title }}</strong><br>
+          <small>{{ notice.created_at|date:"M d, Y H:i" }}</small><br>
+          <p>{{ notice.content|truncatewords:25 }}</p>
+        </li>
+      {% empty %}
+        <li>No notices available.</li>
+      {% endfor %}
+    </ul>
+  </div>
 </div>
 
+{% comment %}
+  You can leave these styles inline for now or move into your static/css/style.css:
+{% endcomment %}
 <style>
 .scroll-box {
-    max-width: 600px;
-    height: 200px;
-    overflow: hidden;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    padding: 10px;
-    background-color: #fdfdfd;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    position: relative;
+  max-width: 600px;
+  height: 200px;
+  overflow: hidden;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #fdfdfd;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  position: relative;
 }
-
 .scroll-content {
-    display: flex;
-    flex-direction: column;
-    animation: scrollUp 20s linear infinite;
+  display: flex;
+  flex-direction: column;
+  animation: scrollUp 20s linear infinite;
 }
-
 .scroll-item {
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
 }
-
 @keyframes scrollUp {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-100%); }
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
 }
-
 .scroll-box:hover .scroll-content {
-    animation-play-state: paused;
+  animation-play-state: paused;
 }
-
 .hover-zoom:hover {
-    transform: scale(1.03);
-    transition: transform 0.3s ease;
+  transform: scale(1.03);
+  transition: transform 0.3s ease;
 }
-</style>
-
- <!-- for notice board -->
-<h2 class="text-center mt-5">📌 Notice Board</h2>
-<div class="notice-board mt-3">
-    <ul class="notice-list">
-        {% for notice in notices %}
-            <li>
-                <strong>{{ notice.title }}</strong><br>
-                <small>{{ notice.created_at|date:"M d, Y H:i" }}</small><br>
-                <p>{{ notice.content|truncatewords:25 }}</p>
-            </li>
-        {% empty %}
-            <li>No notices available.</li>
-        {% endfor %}
-    </ul>
-</div>
-
-<style>
+/* gallery thumbnail hover */
+.gallery-thumb {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.gallery-thumb:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+/* notice board */
 .notice-board {
-    max-height: 300px;
-    overflow-y: auto;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    padding: 15px;
-    background: #fffefc;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  max-height: 300px;
+  overflow-y: auto;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  background: #fffefc;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
 }
 .notice-list li {
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px dashed #ccc;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #ccc;
 }
 </style>
 {% endblock %}

@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -5,6 +6,7 @@ from .models import DiscussionPost, PostReaction, Notice, Report
 from .forms import DiscussionPostForm
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 @never_cache
 def home(request):
@@ -23,6 +25,27 @@ def home(request):
         'latest_posts': latest_posts,
         'notices': notices
     })
+#gallery work
+def _list_gallery(dir_name):
+    gallery_dir = os.path.join(settings.BASE_DIR, 'static', 'css', 'img', dir_name)
+    files = sorted(f for f in os.listdir(gallery_dir)
+                   if f.lower().endswith(('.png','.jpg','.jpeg','.gif')))
+    return [f'css/img/{dir_name}/{fname}' for fname in files]
+
+def gallery_left(request):
+    images = _list_gallery('gallery_left')
+    return render(request, 'accounts/gallery.html', {
+        'images': images,
+        'title': 'Left-Side Gallery'
+    })
+
+def gallery_right(request):
+    images = _list_gallery('gallery_right')
+    return render(request, 'accounts/gallery.html', {
+        'images': images,
+        'title': 'Right-Side Gallery'
+    })
+
 #for reports
 def reports(request):
     all_reports = Report.objects.order_by('-created_at')[:10]

@@ -70,11 +70,11 @@ def post_detail(request, pk):
     })
 def service_page(request):
     services = [
-        {"title": "Waste Collection", "desc": "Schedule pickups, track waste disposal, and get eco-tips."},
-        {"title": "Free health services", "desc": "Information and contacts.","url": "https://freehealth.kathmandu.gov.np/home/"},
-        {"title": "Tax Payment", "desc": "Pay online and download receipts.","url": "https://eservice.kathmandu.gov.np/"},
-        {"title": "Public Parks", "desc": "Find parks, facilities, and events near you."},
-        {"title": "Road Maintenance", "desc": "Report potholes, construction updates, and work schedules."},
+        {"title": "Public Construction Department", "desc": "","url": "https://kathmandu.gov.np/wp-content/uploads/2023/02/%E0%A4%B8%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%B5%E0%A4%9C%E0%A4%A8%E0%A4%BF%E0%A4%95-%E0%A4%A8%E0%A4%BF%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%BE%E0%A4%A3-%E0%A4%B5%E0%A4%BF%E0%A4%AD%E0%A4%BE%E0%A4%97.pdf"},
+        {"title": "Free health services", "desc": "","url": "https://freehealth.kathmandu.gov.np/home/"},
+        {"title": "Tax Payment", "desc": "","url": "https://eservice.kathmandu.gov.np/"},
+        {"title": "Public Parks", "desc": "Find parks, facilities, and events near you.","url": "https://www.google.com/maps/search/public+parks+in+kathmandu/@27.7181811,85.2762222,27678m/data=!3m1!1e3?entry=ttu&g_ep=EgoyMDI1MDYzMC4wIKXMDSoASAFQAw%3D%3D"},
+        {"title": "Education Department", "desc": "","url": "https://kathmandu.gov.np/wp-content/uploads/2023/02/%E0%A4%B6%E0%A4%BF%E0%A4%95%E0%A5%8D%E0%A4%B7%E0%A4%BE-%E0%A4%B5%E0%A4%BF%E0%A4%AD%E0%A4%BE%E0%A4%97-%E0%A4%A8%E0%A4%BE%E0%A4%97%E0%A4%B0%E0%A4%BF%E0%A4%95-%E0%A4%B5%E0%A4%A1%E0%A4%BE%E0%A4%AA%E0%A4%A4%E0%A5%8D%E0%A4%B0.pdf"},
         {"title": "Permit Applications", "desc": "Apply for permits for events, businesses, and construction."}
     ]
     return render(request, 'services/service_page.html', {'services': services})

@@ -1,8 +1,28 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-  <div class="container mt-5 text-center">
-    <h1>Left-Side Gallery</h1>
-    <!-- later: loop through images, etc -->
-    <p>Coming soon…</p>
+<div class="container my-5">
+  
+
+  <div id="carouselLeft" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      {% for img in images %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <img src="{% static img %}"
+             class="d-block w-100 rounded"
+             alt="Slide {{ forloop.counter }}">
+      </div>
+      {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button"
+            data-bs-target="#carouselLeft" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button"
+            data-bs-target="#carouselLeft" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
   </div>
+</div>
 {% endblock %}

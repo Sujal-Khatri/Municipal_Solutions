@@ -33,18 +33,20 @@ def _list_gallery(dir_name):
     return [f'css/img/{dir_name}/{fname}' for fname in files]
 
 def gallery_left(request):
-    images = _list_gallery('gallery_left')
-    return render(request, 'accounts/gallery.html', {
-        'images': images,
-        'title': 'Left-Side Gallery'
-    })
+    # Point at your static folder
+    img_dir = os.path.join(settings.BASE_DIR, 'static/css/img/gallery_left')
+    files  = sorted(f for f in os.listdir(img_dir)
+                    if f.lower().endswith(('.jpg','.jpeg','.png')))
+    # build the static paths
+    images = [f'css/img/gallery_left/{fname}' for fname in files]
+    return render(request, 'gallery_left.html', {'images': images})
 
 def gallery_right(request):
-    images = _list_gallery('gallery_right')
-    return render(request, 'accounts/gallery.html', {
-        'images': images,
-        'title': 'Right-Side Gallery'
-    })
+    img_dir = os.path.join(settings.BASE_DIR, 'static/css/img/gallery_right')
+    files  = sorted(f for f in os.listdir(img_dir)
+                    if f.lower().endswith(('.jpg','.jpeg','.png')))
+    images = [f'css/img/gallery_right/{fname}' for fname in files]
+    return render(request, 'gallery_right.html', {'images': images})
 
 #for reports
 def reports(request):

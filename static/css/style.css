@@ -27,3 +27,56 @@
 .navbar-toggler-icon {
   filter: invert(1);
 }
+
+/* Home-page cards as formal government cards */
+
+/* common card wrapper */
+.home-card {
+  position: relative;
+  overflow: hidden;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  transition: transform 0.2s ease;
+}
+.home-card:hover {
+  transform: scale(1.02);
+}
+
+/* watermark seal behind everything */
+.home-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("../css/img/mahanagarpalika.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.40;      /* VERY faint */
+  z-index: 1;
+}
+
+/* ensure your content sits above it */
+.home-card .card-body {
+  position: relative;
+  z-index: 2;
+  color: #212529;     /* bootstrap’s dark text */
+}
+
+/* formal title styling */
+.home-card .card-title {
+  color: #004080;     /* deep navy */
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+/* normal body text */
+.home-card .card-text {
+  color: #030408;
+  margin-bottom: 1rem;
+}
+
+/* keep buttons standard bootstrap blue */
+.home-card .btn {
+  width: 100%;
+  font-weight: 500;
+}

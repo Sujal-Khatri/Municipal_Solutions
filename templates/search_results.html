@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Search results for “{{ query }}”</h2>
+
+  <hr>
+
+  <h4>Posts</h4>
+  {% if post_results %}
+    <ul class="list-group mb-4">
+      {% for post in post_results %}
+        <li class="list-group-item">
+          <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
+          <small class="text-muted">by {{ post.author.username }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p><em>No posts match.</em></p>
+  {% endif %}
+
+  <h4>Users</h4>
+  {% if user_results %}
+    <ul class="list-group">
+      {% for u in user_results %}
+        <li class="list-group-item">
+          <a href="{% url 'public_profile' u.username %}">{{ u.username }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p><em>No users match.</em></p>
+  {% endif %}
+</div>
+{% endblock %}

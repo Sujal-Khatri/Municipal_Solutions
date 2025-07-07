@@ -1,10 +1,9 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, authenticate, logout, get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from .forms import EditProfileForm
 
 from .forms import (
     CustomUserCreationForm,
@@ -33,7 +32,6 @@ def register(request):
             return redirect('login')
     else:
         form = CustomUserCreationForm()
-
     return render(request, 'accounts/register.html', {'form': form})
 
 
@@ -50,7 +48,6 @@ def user_login(request):
                 return redirect('home')
     else:
         form = AuthenticationForm()
-
     return render(request, 'accounts/login.html', {'form': form})
 
 
@@ -58,7 +55,7 @@ def user_login(request):
 def profile(request):
     user = request.user
     posts = DiscussionPost.objects.filter(author=user).order_by('-created_at')
-    reactions = PostReaction.objects.filter(user=request.user).order_by('-id')
+    reactions = PostReaction.objects.filter(user=user).order_by('-id')
     likes_count = reactions.filter(reaction='like').count()
     dislikes_count = reactions.filter(reaction='dislike').count()
     return render(request, 'accounts/profile.html', {
@@ -87,11 +84,30 @@ def edit_profile(request):
             'phone_number': request.user.phone_number,
             'location':     request.user.profile.location,
         })
+    return render(request, 'accounts/edit_profile.html', {'form': form})
 
-    return render(request, 'accounts/edit_profile.html', {
-        'form': form
-    })
 
 def user_logout(request):
     logout(request)
     return redirect('home')
+
+
+# —————————————————————————————————————————————
+# Public profile view (step 5)
+def public_profile(request, username):
+    """
+    Show anyone's profile at /users/<username>/
+    """
+    User = get_user_model()
+    profile_user = get_object_or_404(User, username=username)
+    posts = DiscussionPost.objects.filter(author=profile_user).order_by('-created_at')
+    reactions = PostReaction.objects.filter(user=profile_user).order_by('-id')
+    likes_count = reactions.filter(reaction='like').count()
+    dislikes_count = reactions.filter(reaction='dislike').count()
+    return render(request, 'accounts/public_profile.html', {
+        'profile_user': profile_user,
+        'posts': posts,
+        'reactions': reactions,
+        'likes_count': likes_count,
+        'dislikes_count': dislikes_count,
+    })

@@ -2,6 +2,7 @@ import os
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 from .models import DiscussionPost, PostReaction, Notice, Report
 from .forms import DiscussionPostForm
 from django.views.decorators.cache import never_cache
@@ -12,6 +13,17 @@ from django.conf import settings
 def home(request):
     latest_posts = DiscussionPost.objects.order_by('-created_at')[:5]
     return render(request, 'services/home.html', {'latest_posts': latest_posts})
+#for search bar
+def search(request):
+    q = request.GET.get('q', '').strip()
+    post_results = DiscussionPost.objects.filter(title__icontains=q) if q else []
+    user_model   = get_user_model()
+    user_results = user_model.objects.filter(username__icontains=q) if q else []
+    return render(request, 'search_results.html', {
+        'query': q,
+        'post_results': post_results,
+        'user_results': user_results,
+    })
 def dashboard(request):
     # your view logic
     #latest_posts = DiscussionPost.objects.order_by('-created_at')[:5]

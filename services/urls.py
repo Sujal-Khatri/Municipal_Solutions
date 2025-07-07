@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import service_page
+from services import views as service_views
 from . import views
 
 urlpatterns = [
@@ -9,6 +10,7 @@ urlpatterns = [
     path('discussions/<int:pk>/', views.post_detail, name='post_detail'),
     path('discussions/<int:pk>/react/', views.like_post, name='like_post'),
     path('discussions/delete/<int:post_id>/', views.delete_post, name='delete_post'),
+     path('search/', service_views.search, name='search'),
     path('services/', service_page, name='service_page'),
     path('reports/', views.reports, name='reports'),
     path('gallery/left/', views.gallery_left, name='gallery_left'),

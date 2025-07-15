@@ -51,7 +51,7 @@
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.40;      /* VERY faint */
+  opacity: 0.40;      
   z-index: 1;
 }
 
@@ -59,12 +59,12 @@
 .home-card .card-body {
   position: relative;
   z-index: 2;
-  color: #212529;     /* bootstrap’s dark text */
+  color: #212529;     
 }
 
 /* formal title styling */
 .home-card .card-title {
-  color: #004080;     /* deep navy */
+  color: #004080;     /
   font-weight: 600;
   margin-bottom: 0.75rem;
 }

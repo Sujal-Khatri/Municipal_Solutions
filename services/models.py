@@ -3,15 +3,35 @@ from accounts.models import CustomUser
 from django.conf import settings
 
 class DiscussionPost(models.Model):
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
-    content = models.TextField()
-    image = models.ImageField(upload_to='discussion_images/', blank=True, null=True)  # NEW
-    location = models.CharField(max_length=100, blank=True, null=True)  # For storing map location
+    CATEGORY_TAX          = 'tax'
+    CATEGORY_CONSTRUCTION = 'construction'
+    CATEGORY_HEALTH       = 'health'
+    CATEGORY_CHOICES = [
+        (CATEGORY_TAX,          'Tax'),
+        (CATEGORY_CONSTRUCTION, 'Construction'),
+        (CATEGORY_HEALTH,       'Health'),
+    ]
+
+    author     = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    title      = models.CharField(max_length=200)
+    content    = models.TextField()
+    image      = models.ImageField(upload_to='discussion_images/', blank=True, null=True)
+    location   = models.CharField(max_length=100, blank=True, null=True)
+    # ← New category field
+    category   = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default=CATEGORY_TAX,
+        help_text="Select one: Tax, Construction or Health"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    likes = models.PositiveIntegerField(default=0)
-    dislikes = models.PositiveIntegerField(default=0)
+    likes      = models.PositiveIntegerField(default=0)
+    dislikes   = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        # now shows the category in the repr
+        return f"[{self.get_category_display()}] {self.title}"
 
 class PostReaction(models.Model):
     LIKE = 'like'
@@ -24,9 +44,30 @@ class PostReaction(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     post = models.ForeignKey(DiscussionPost, on_delete=models.CASCADE)
     reaction = models.CharField(max_length=7, choices=VOTE_CHOICES)
+    
 
     class Meta:
         unique_together = ('user', 'post')  # Ensures one vote per user per post
+
+    def __str__(self):
+        return f"{self.user.username} - {self.reaction} on Post ID {self.post.id}"
+
+class Notice(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title    
+    
+class Report(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    file = models.FileField(upload_to='reports/')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title

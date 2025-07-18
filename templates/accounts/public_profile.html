@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>{{ profile_user.username }}’s Profile</h1>
+  <p><strong>Email:</strong> {{ profile_user.email }}</p>
+  <p><strong>Phone:</strong> {{ profile_user.phone_number }}</p>
+  <p><strong>Location:</strong> {{ profile_user.profile.location }}</p>
+
+  <h3 class="mt-4">Posts by {{ profile_user.username }}</h3>
+  {% for post in posts %}
+    <div class="card mb-2">
+      <div class="card-body">
+        <a href="{% url 'post_detail' post.id %}"><strong>{{ post.title }}</strong></a>
+        <span class="float-end text-muted">{{ post.created_at|date:"M d, Y" }}</span>
+      </div>
+    </div>
+  {% empty %}
+    <p>No posts yet.</p>
+  {% endfor %}
+
+  <h3 class="mt-4">Reactions by {{ profile_user.username }}</h3>
+  {% for r in reactions %}
+    <div class="card mb-2">
+      <div class="card-body">
+        {{ profile_user.username }} {{ r.reaction }}d
+        <a href="{% url 'post_detail' r.post.id %}">{{ r.post.title }}</a>
+        <span class="float-end text-muted">{{ r.created_at|date:"M d, Y" }}</span>
+      </div>
+    </div>
+  {% empty %}
+    <p>No reactions yet.</p>
+  {% endfor %}
+{% endblock %}

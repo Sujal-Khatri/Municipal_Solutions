@@ -1,75 +1,107 @@
+{# templates/services/create_post.html #}
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<h1>Create New Discussion Post</h1>
+  <div class="container mt-4">
+    <h1>Create New Discussion Post</h1>
 
-{# ⚠️ REMOVE location from as_p and insert it manually #}
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    
-    {% for field in form %}
-        {% if field.name != 'location' %}
-            <p>{{ field.label_tag }} {{ field }}</p>
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <div class="mb-3">
+        {{ form.title.label_tag }}
+        {{ form.title }}
+        {% if form.title.errors %}
+          <div class="text-danger">{{ form.title.errors|striptags }}</div>
         {% endif %}
-    {% endfor %}
+      </div>
 
-    <input type="hidden" id="id_location" name="location">
+      <div class="mb-3">
+        {{ form.content.label_tag }}
+        {{ form.content }}
+        {% if form.content.errors %}
+          <div class="text-danger">{{ form.content.errors|striptags }}</div>
+        {% endif %}
+      </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
-    <a href="{% url 'discussions' %}" class="btn btn-secondary">Cancel</a>
-</form>
+      <div class="mb-3">
+        {{ form.image.label_tag }}
+        {{ form.image }}
+        {% if form.image.errors %}
+          <div class="text-danger">{{ form.image.errors|striptags }}</div>
+        {% endif %}
+      </div>
 
-<h5>Select Location on Map (Kathmandu)</h5>
-<div id="map" style="height: 400px; margin-bottom: 20px;"></div>
+      <div class="mb-3">
+        {{ form.category.label_tag }}
+        {{ form.category }}
+        {% if form.category.errors %}
+          <div class="text-danger">{{ form.category.errors|striptags }}</div>
+        {% endif %}
+      </div>
 
-<!-- ✅ Leaflet CSS & JS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+      {# keep location as a hidden field; it's filled by Leaflet click #}
+      <input type="hidden" id="id_location" name="location"
+             value="{{ form.location.value|default_if_none:'' }}">
 
-<!-- ✅ This JS should go AFTER Leaflet is loaded -->
-<script>
-    // Wait until page is fully loaded
-    window.addEventListener('load', function () {
+      <button type="submit" class="btn btn-primary">Submit</button>
+      <a href="{% url 'discussions' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+
+    <hr class="my-4">
+
+    <h5>Select Location on Map (Kathmandu)</h5>
+    <div id="map" style="height: 400px; margin-bottom: 20px;"></div>
+
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+      window.addEventListener('load', function () {
         const locationInput = document.getElementById("id_location");
         const form = document.querySelector("form");
 
-        // Prevent form submission if location is empty
-        form.addEventListener("submit", function (event) {
-            if (!locationInput.value) {
-                alert("⚠️ Please select a location on the map.");
-                event.preventDefault();
-            }
+        form.addEventListener("submit", function (e) {
+          if (!locationInput.value) {
+            alert("⚠️ Please select a location on the map.");
+            e.preventDefault();
+          }
         });
 
-        // Map bounds for Kathmandu
-        const minLat = 27.6, maxLat = 27.8;
-        const minLng = 85.25, maxLng = 85.38;
+        const bounds = {
+          north: 27.8, south: 27.6,
+          east: 85.38, west: 85.25
+        };
 
-        const map = L.map('map').setView([27.7172, 85.3240], 13);
+        const map = L.map('map').setView(
+          [(bounds.north + bounds.south)/2,
+           (bounds.east + bounds.west)/2],
+          13
+        );
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+        L.tileLayer(
+          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          { attribution: '© OpenStreetMap contributors' }
+        ).addTo(map);
 
         let marker;
-
         map.on('click', function (e) {
-            const lat = e.latlng.lat.toFixed(6);
-            const lng = e.latlng.lng.toFixed(6);
+          const lat = e.latlng.lat.toFixed(6);
+          const lng = e.latlng.lng.toFixed(6);
 
-            if (lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng) {
-                if (marker) {
-                    marker.setLatLng(e.latlng);
-                } else {
-                    marker = L.marker(e.latlng).addTo(map);
-                }
+          if (lat >= bounds.south && lat <= bounds.north
+           && lng >= bounds.west  && lng <= bounds.east) {
+            if (marker) marker.setLatLng(e.latlng);
+            else      marker = L.marker(e.latlng).addTo(map);
 
-                locationInput.value = `${lat},${lng}`;
-                console.log("📌 Location set:", locationInput.value);
-            } else {
-                alert("❌ Please click inside Kathmandu city bounds.");
-            }
+            locationInput.value = `${lat},${lng}`;
+          } else {
+            alert("❌ Please click inside Kathmandu city bounds.");
+          }
         });
-    });
-</script>
+      });
+    </script>
+  </div>
 {% endblock %}

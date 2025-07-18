@@ -66,8 +66,22 @@ def reports(request):
     return render(request, 'services/reports.html', {'reports': all_reports})
 
 def discussions(request):
-    posts = DiscussionPost.objects.all().order_by('-created_at')
-    return render(request, 'services/discussions.html', {'posts': posts})
+    # 1️⃣ Grab the GET parameter
+    cat = request.GET.get('category')
+
+    # 2️⃣ Start with all posts
+    qs = DiscussionPost.objects.all()
+
+    # 3️⃣ If it’s one of our three choices, filter by it
+    if cat in dict(DiscussionPost.CATEGORY_CHOICES):
+        qs = qs.filter(category=cat)
+
+    # 4️⃣ Order and render
+    posts = qs.order_by('-created_at')
+    return render(request, 'services/discussions.html', {
+        'posts': posts,
+        'selected_category': cat,   # so template knows what’s active
+    })
 
 def post_detail(request, pk):
     post = get_object_or_404(DiscussionPost, pk=pk)

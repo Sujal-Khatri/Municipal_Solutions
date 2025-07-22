@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Free Health Services{% endblock %}
+
+{% block content %}
+  <h1>Free Health Services</h1>
+
+  <!-- First informational box -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <p>
+        नेपालको संविधान २०७२ को धारा ३५ ले व्यवस्था गरेको प्रत्येक नागरिकलाई राज्यबाट आधारभूत स्वास्थ्य सेवा निःशुल्क प्राप्त गर्ने हक हुने, कसैलाई पनि आकस्मिक स्वास्थ्य सेवाबाट बन्चित नगरिने र प्रत्येक नागरिकलाई स्वास्थ्य सेवामा समान पहुँचको हक हुने भन्ने संवैधानिक व्यवस्था रहेको छ। काठमाडौं महानगरपालिका जनस्वास्थ्य ऐन २०८० को दफा २८ अनुसार काठमाडौं महानगरपालिका क्षेत्र भित्र रहेका अस्पतालहरुले विपन्न, असहाय र ब्यवारिसे नागरिकहरुलाई कुल शैयाको १० प्रतिशत विरामिलाई लाग्ने सम्पुर्ण उपचार खर्च निःशुल्क गर्नुपर्ने कानूनि व्यवस्था गरेको छ। नेपाल सरकारको स्वास्थ्य संस्था संचालन मापदण्ड २०७७ को दफा ७० घ मा समेत सो सम्बन्धि व्यवस्था गरेकाले नेपाल भरका उक्त वर्गमा पर्ने नागरिकहरुलाई काठमाण्डौ महानगरपालिका क्षेत्र भित्रका अस्पतालहरुमा निःशुल्क उपचार सेवा प्रभावकारी, पहुँच योग्य र पारदर्शी बनाउने उद्देश्यले यो अनलाइन प्रणालिको विकास गरिएको हो।
+      </p>
+    </div>
+  </div>
+
+  <!-- Second informational box -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h4 class="card-title">
+        विपन्न र असाहय बिरामीले निशुल्क उपचार सेवा लिनका लागि चाहिने आवश्यक कागजातः
+      </h4>
+      <ol>
+        <li>नेपाल सरकार / प्रदेश सरकार/ स्थानिय सरकारले लक्षित वर्ग हो भनी जारी गरेको कागजात/ परिचय पत्र वा,</li>
+        <li>राष्ट्रिय परिचयपत्र / नेपाली नागरिकता प्रमाणपत्र/ जन्मदर्ता प्रमाणपत्र प्रतिलिपि र हालसालै खिचिएको फोटो र,</li>
+        <li>रोग पहिचान भए सोको कागजपत्र र,</li>
+        <li>अनुसूची-५ को आधारमा सम्बन्धीत स्थानिय तहको वडाले लक्षित वर्ग हो भनी अनुसूची-४ अनुसारको सर्जमिन गरेको कागज र,</li>
+        <li>सम्बन्धीत स्थानिय तहको वडा कार्यालयले उपचारको लागि अनुसूची-३ अनुसारको सिफारिस गरेको पत्र,</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Existing hospital table -->
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Serial</th>
+        <th>Hospital Name</th>
+        <th>Allocated/Total Beds</th>
+        <th>Active Patients</th>
+        <th>Hospital Type</th>
+        <th>Contact Person</th>
+        <th>Contact Number</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for hosp in hospitals %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ hosp.name }}</td>
+          <td>{{ hosp.allocated_beds }}/{{ hosp.total_beds }}</td>
+          <td>{{ hosp.active_patients }}</td>
+          <td>{{ hosp.hospital_type }}</td>
+          <td>{{ hosp.contact_person }}</td>
+          <td>{{ hosp.contact_number }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="7">No hospital data yet. Head to the admin panel to add entries.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import DiscussionPost, PostReaction, Notice, Report, TaxReturn, SelfAssessmentReturn
+from .models import DiscussionPost, PostReaction, Notice, Report, TaxReturn, SelfAssessmentReturn, Hospital
 from django.utils.html import format_html
 
 @admin.register(DiscussionPost)
@@ -27,6 +27,18 @@ admin.site.register(PostReaction)
 admin.site.register(Notice)
 
 admin.site.register(Report)
+
+@admin.register(Hospital)
+class HospitalAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'name', 'allocated_beds', 'total_beds',
+        'active_patients', 'hospital_type', 'contact_person', 'contact_number'
+    )
+    list_editable = (
+        'allocated_beds', 'total_beds',
+        'active_patients', 'hospital_type', 'contact_person', 'contact_number'
+    )
+    list_per_page = 20
 @admin.register(SelfAssessmentReturn)
 class SelfAssessmentReturnAdmin(admin.ModelAdmin):
     list_display    = ('submission_no','username','pan_no','created_at','submitted')

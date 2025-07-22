@@ -13,6 +13,7 @@ urlpatterns = [
     path('discussions/delete/<int:post_id>/', views.delete_post, name='delete_post'),
     path('search/', service_views.search, name='search'),
     path('services/', service_page, name='service_page'),
+    path('services/free-health/', views.free_health_services, name='free_health_services'),
     path('reports/', views.reports, name='reports'),
     path('gallery/left/', views.gallery_left, name='gallery_left'),
     path('gallery/right/', views.gallery_right, name='gallery_right'),

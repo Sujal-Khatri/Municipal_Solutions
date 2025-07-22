@@ -70,6 +70,29 @@ class Report(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Hospital(models.Model):
+    HOSPITAL_TYPE_CHOICES = [
+        ('Community', 'Community'),
+        ('Private', 'Private'),
+        ('Government', 'Government'),
+        # add more if needed
+    ]
+
+    name = models.CharField("Hospital Name", max_length=255)
+    allocated_beds = models.PositiveIntegerField("Allocated Beds")
+    total_beds     = models.PositiveIntegerField("Total Beds")
+    active_patients = models.PositiveIntegerField("Active Patients")
+    hospital_type  = models.CharField("Hospital Type", max_length=20, choices=HOSPITAL_TYPE_CHOICES)
+    contact_person = models.CharField("Contact Person", max_length=100)
+    contact_number = models.CharField("Contact Number", max_length=20)
+
+    class Meta:
+        verbose_name = "Hospital"
+        verbose_name_plural = "Hospitals"
+
+    def __str__(self):
+        return self.name
 
 class SelfAssessmentReturn(models.Model):
     submission_no        = models.AutoField(primary_key=True)

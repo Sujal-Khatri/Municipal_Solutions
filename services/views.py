@@ -161,13 +161,22 @@ def like_post(request, pk):
 @login_required
 def tax_form(request):
     if request.method == 'POST':
-        form = SelfAssessmentReturnForm(request.POST or None, request.FILES or None)
+        form = SelfAssessmentReturnForm(request.POST, request.FILES)
         if form.is_valid():
-            tax_return = form.save(commit=False)
-            tax_return.user = request.user
-            tax_return.save()
+            sar = form.save(commit=False)
+            # copy your clean() results onto the model
+            sar.income            = form.cleaned_data['income']
+            sar.tax_amount        = form.cleaned_data['tax_amount']
+            sar.interest_penalty  = form.cleaned_data['interest_penalty']
+            sar.total_payable     = form.cleaned_data['total_payable']
+
+            sar.receipt = form.cleaned_data.get('receipt')
+
+            sar.submitted = True    # mark it “submitted”
+            sar.save()
+
             return render(request, 'services/tax_success.html', {
-                'return': tax_return
+                'reference': sar.submission_no
             })
     else:
         form = SelfAssessmentReturnForm()

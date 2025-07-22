@@ -1,5 +1,6 @@
 from django import forms
 from decimal import Decimal
+from django.contrib.auth import authenticate
 from .models import DiscussionPost, SelfAssessmentReturn, TaxReturn
 
 class DiscussionPostForm(forms.ModelForm):
@@ -45,22 +46,27 @@ class SelfAssessmentReturnForm(forms.ModelForm):
     def clean(self):
         cleaned = super().clean()
 
-        # compute income = turnover – deduction
-        turnover = cleaned.get('turnover_amount') or Decimal('0')
-        deduction = cleaned.get('deduction_amount') or Decimal('0')
-        income = turnover - deduction
-        cleaned['income'] = income
+        # 1) check username/password exist in DB
+        username = cleaned.get('username')
+        password = cleaned.get('password')
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if user is None:
+                # If no match, attach a non-field error
+                raise forms.ValidationError(
+                    "The username and/or password you entered are not valid. "
+                    "Please use your registered credentials."
+                )
 
-        # 1% tax, 0.1% penalty
-        cleaned['tax_amount'] = income * Decimal('0.01')
-        cleaned['interest_penalty'] = income * Decimal('0.001')
-
-        # total = tax + penalty + deposit
-        deposit = cleaned.get('deposit_amount') or Decimal('0')
+        # 2) now your existing calculations:
+        # you could auto-compute income, tax, etc here if desired
+        cleaned['income'] = cleaned['turnover_amount'] - cleaned['deduction_amount']
+        cleaned['tax_amount'] = cleaned['income'] * Decimal('0.01')
+        cleaned['interest_penalty'] = cleaned['income'] * Decimal('0.001')
         cleaned['total_payable'] = (
             cleaned['tax_amount'] +
             cleaned['interest_penalty'] +
-            deposit
+            cleaned['deposit_amount']
         )
 
         return cleaned

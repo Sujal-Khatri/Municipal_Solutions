@@ -1,10 +1,11 @@
-{% extends 'base.html' %}
-{% load static %}
+<!-- services/tax_success.html -->
 
+{% extends 'base.html' %}
 {% block content %}
-<div class="container my-5 text-center">
-  <h2 class="text-success">Return Submitted!</h2>
-  <p>Your self-assessment has been received. Your reference number is <strong>#{{ return_id }}</strong>.</p>
-  <a href="{% url 'home' %}" class="btn btn-primary mt-3">Back to Home</a>
-</div>
+  <div class="container my-5 text-center">
+    <h2>Thank you!</h2>
+    <p>Your self-assessment has been received.</p>
+    <p>Your reference number is <strong>#{{ reference }}</strong>.</p>
+    <a href="{% url 'home' %}" class="btn btn-primary">Back to Home</a>
+  </div>
 {% endblock %}

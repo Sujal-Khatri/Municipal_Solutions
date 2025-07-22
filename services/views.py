@@ -163,27 +163,65 @@ def tax_form(request):
     if request.method == 'POST':
         form = SelfAssessmentReturnForm(request.POST, request.FILES)
         if form.is_valid():
+            # build but don’t mark submitted until payment path decided
             sar = form.save(commit=False)
-            # copy your clean() results onto the model
-            sar.income            = form.cleaned_data['income']
-            sar.tax_amount        = form.cleaned_data['tax_amount']
-            sar.interest_penalty  = form.cleaned_data['interest_penalty']
-            sar.total_payable     = form.cleaned_data['total_payable']
-
-            sar.receipt = form.cleaned_data.get('receipt')
-
-            sar.submitted = True    # mark it “submitted”
+            # pull in the computed fields from clean()
+            sar.income           = form.cleaned_data['income']
+            sar.tax_amount       = form.cleaned_data['tax_amount']
+            sar.interest_penalty = form.cleaned_data['interest_penalty']
+            sar.total_payable    = form.cleaned_data['total_payable']
+            # file upload (receipt) if present
+            sar.receipt          = form.cleaned_data.get('receipt')
+            sar.submitted        = False
             sar.save()
 
+            # Online payment path → redirect into eSewa sandbox
+            if form.cleaned_data['payment_type'] == SelfAssessmentReturnForm.PAYMENT_ONLINE:
+                build = request.build_absolute_uri
+                return render(request, 'services/esewa_redirect.html', {
+                    'tAmt': sar.total_payable,   # total amount
+                    'amt':  sar.total_payable,   # actual payable
+                    'psc':  0,                   # service charge
+                    'pdc':  0,                   # delivery charge
+                    'pid':  sar.submission_no,   # your internal ID
+                    'su':   build(reverse('esewa_success')),
+                    'fu':   build(reverse('esewa_failure')),
+                })
+
+            # Bank payment path → mark submitted immediately
+            sar.submitted = True
+            sar.save()
             return render(request, 'services/tax_success.html', {
                 'reference': sar.submission_no
             })
+
     else:
         form = SelfAssessmentReturnForm()
 
     return render(request, 'services/tax_form.html', {
         'form': form
     })
+
+@login_required
+def esewa_redirect(request):
+    # won't be called directly; we render it in tax_form
+    return redirect('home')
+
+
+@login_required
+def esewa_success(request):
+    # eSewa will GET back pid, amt, etc.
+    pid = request.GET.get('pid')
+    sar = get_object_or_404(SelfAssessmentReturn, submission_no=pid)
+    sar.submitted = True
+    sar.save()
+    return render(request, 'services/tax_success.html', {
+        'reference': pid
+    })
+
+@login_required
+def esewa_failure(request):
+    return render(request, 'services/tax_failure.html')
 
 @login_required
 def tax_receipt_upload(request, pk):

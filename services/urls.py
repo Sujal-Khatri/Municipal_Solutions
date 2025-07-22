@@ -18,4 +18,8 @@ urlpatterns = [
     path('tax/form/',               views.tax_form,           name='tax_form'),
     path('tax/<int:pk>/receipt/',   views.tax_receipt_upload, name='tax_receipt_upload'),
     path('tax/<int:pk>/detail/',    views.tax_detail,         name='tax_detail'),
+    path('tax/form/', views.tax_form, name='tax_form'),
+    path('tax/esewa/redirect/', views.esewa_redirect, name='esewa_redirect'),
+    path('tax/esewa/success/',  views.esewa_success,  name='esewa_success'),
+    path('tax/esewa/failure/',  views.esewa_failure,  name='esewa_failure'),
 ]

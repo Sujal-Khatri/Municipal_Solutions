@@ -33,25 +33,23 @@ class DiscussionPost(models.Model):
     def __str__(self):
         return f"[{self.get_category_display()}] {self.title}"
 
-
 class PostReaction(models.Model):
-    LIKE = 'like'
-    DISLIKE = 'dislike'
+    LIKE     = 'like'
+    DISLIKE  = 'dislike'
     VOTE_CHOICES = [
         (LIKE, 'Like'),
         (DISLIKE, 'Dislike'),
     ]
 
-    user     = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    post     = models.ForeignKey(DiscussionPost, on_delete=models.CASCADE)
-    reaction = models.CharField(max_length=7, choices=VOTE_CHOICES)
+    user      = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    post      = models.ForeignKey(DiscussionPost,            on_delete=models.CASCADE)
+    reaction  = models.CharField(max_length=7, choices=VOTE_CHOICES)
 
     class Meta:
         unique_together = ('user', 'post')
 
     def __str__(self):
         return f"{self.user.username} - {self.reaction} on Post ID {self.post.id}"
-
 
 class Notice(models.Model):
     title      = models.CharField(max_length=255)
@@ -64,7 +62,6 @@ class Notice(models.Model):
     def __str__(self):
         return self.title
 
-
 class Report(models.Model):
     title      = models.CharField(max_length=200)
     content    = models.TextField()
@@ -73,7 +70,6 @@ class Report(models.Model):
 
     def __str__(self):
         return self.title
-
 
 class SelfAssessmentReturn(models.Model):
     submission_no        = models.AutoField(primary_key=True)
@@ -105,7 +101,12 @@ class SelfAssessmentReturn(models.Model):
     deposit_amount       = models.DecimalField("दाखिला रकम", max_digits=12, decimal_places=2)
 
     submitted            = models.BooleanField(default=False)
-    receipt              = models.FileField("Payment Receipt", upload_to='tax_receipts/', blank=True, null=True)
+    receipt              = models.FileField(
+                              "Payment Receipt",
+                              upload_to='tax_receipts/',
+                              blank=True,
+                              null=True
+                          )
 
     created_at           = models.DateTimeField(auto_now_add=True)
 
@@ -114,7 +115,6 @@ class SelfAssessmentReturn(models.Model):
 
     def __str__(self):
         return f"D-01 Return #{self.submission_no}"
-
 
 class TaxReturn(models.Model):
     user                 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -133,7 +133,8 @@ class TaxReturn(models.Model):
     deposit_amount       = models.DecimalField(max_digits=12, decimal_places=2)
     receipt              = models.FileField(
                               upload_to='tax_receipts/',
-                              blank=True, null=True,
+                              blank=True,
+                              null=True,
                               help_text="Upload your payment receipt"
                           )
     submitted_at         = models.DateTimeField(auto_now_add=True)

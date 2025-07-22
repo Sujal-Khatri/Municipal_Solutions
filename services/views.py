@@ -1,4 +1,4 @@
-import os
+import os, hmac, hashlib, base64
 from django.shortcuts import render
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -163,44 +163,50 @@ def tax_form(request):
     if request.method == 'POST':
         form = SelfAssessmentReturnForm(request.POST, request.FILES)
         if form.is_valid():
-            # build but don’t mark submitted until payment path decided
             sar = form.save(commit=False)
-            # pull in the computed fields from clean()
+            # copy cleaned financials
             sar.income           = form.cleaned_data['income']
             sar.tax_amount       = form.cleaned_data['tax_amount']
             sar.interest_penalty = form.cleaned_data['interest_penalty']
             sar.total_payable    = form.cleaned_data['total_payable']
-            # file upload (receipt) if present
-            sar.receipt          = form.cleaned_data.get('receipt')
-            sar.submitted        = False
+            sar.submitted        = True
             sar.save()
 
-            # Online payment path → redirect into eSewa sandbox
-            if form.cleaned_data['payment_type'] == SelfAssessmentReturnForm.PAYMENT_ONLINE:
-                build = request.build_absolute_uri
+            if sar.payment_type == SelfAssessmentReturnForm.PAYMENT_ONLINE:
+                # build the HMAC‐SHA256 signature
+                txn_id = str(sar.submission_no)
+                total  = sar.total_payable
+                msg    = f"total_amount={total},transaction_uuid={txn_id},product_code={settings.ESEWA_MERCHANT_CODE}"
+                digest = hmac.new(
+                    settings.ESEWA_SECRET_KEY.encode(),
+                    msg.encode(),
+                    hashlib.sha256
+                ).digest()
+                signature = base64.b64encode(digest).decode()
+
                 return render(request, 'services/esewa_redirect.html', {
-                    'tAmt': sar.total_payable,   # total amount
-                    'amt':  sar.total_payable,   # actual payable
-                    'psc':  0,                   # service charge
-                    'pdc':  0,                   # delivery charge
-                    'pid':  sar.submission_no,   # your internal ID
-                    'su':   build(reverse('esewa_success')),
-                    'fu':   build(reverse('esewa_failure')),
+                    'endpoint': settings.ESEWA_SANDBOX_URL,
+                    'data': {
+                        'amount':           sar.tax_amount,      # or sar.income if you want
+                        'tax_amount':       sar.tax_amount,
+                        'total_amount':     sar.total_payable,
+                        'transaction_uuid': txn_id,
+                        'product_code':     settings.ESEWA_MERCHANT_CODE,
+                        'product_service_charge': 0,
+                        'product_delivery_charge': 0,
+                        'success_url':      settings.ESEWA_SUCCESS_URL,
+                        'failure_url':      settings.ESEWA_FAILURE_URL,
+                        'signed_field_names': "total_amount,transaction_uuid,product_code",
+                        'signature':        signature,
+                    }
                 })
-
-            # Bank payment path → mark submitted immediately
-            sar.submitted = True
-            sar.save()
-            return render(request, 'services/tax_success.html', {
-                'reference': sar.submission_no
-            })
-
+            else:
+                # bank flow → go straight to success page
+                return redirect('tax_success', reference=sar.submission_no)
     else:
         form = SelfAssessmentReturnForm()
 
-    return render(request, 'services/tax_form.html', {
-        'form': form
-    })
+    return render(request, 'services/tax_form.html', {'form': form})
 
 @login_required
 def esewa_redirect(request):
@@ -210,7 +216,9 @@ def esewa_redirect(request):
 
 @login_required
 def esewa_success(request):
-    # eSewa will GET back pid, amt, etc.
+    """
+    Endpoint that eSewa will redirect to on **successful** test payment.
+    """
     pid = request.GET.get('pid')
     sar = get_object_or_404(SelfAssessmentReturn, submission_no=pid)
     sar.submitted = True

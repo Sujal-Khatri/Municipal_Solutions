@@ -132,3 +132,12 @@ LOGOUT_REDIRECT_URL = 'home'
 # Media files (user uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# eSewa sandbox credentials (take these from the “Test credentials” page)
+ESEWA_MERCHANT_CODE   = "EPAYTEST"
+ESEWA_SECRET_KEY      = "8gBm/:&EnhH.1/q"   # from “Secret Key” under “For Epay-v2”
+ESEWA_SANDBOX_URL     = "https://uat.esewa.com.np/api/epay/main/v2/form"
+# your own success/failure endpoints:
+ESEWA_SUCCESS_URL     = "http://127.0.0.1:8000/tax/success/"
+ESEWA_FAILURE_URL     = "http://127.0.0.1:8000/tax/form/"

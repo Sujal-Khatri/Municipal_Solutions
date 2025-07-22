@@ -56,6 +56,11 @@ class SelfAssessmentReturnForm(forms.ModelForm):
             'deposit_amount':      forms.NumberInput(attrs={'class': 'form-control'}),
             'receipt':             forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        pt = self.data.get('payment_type') or self.initial.get('payment_type')
+        # only require a receipt when paying by bank
+        self.fields['receipt'].required = (pt == 'bank')
 
     def clean_password2(self):
         pw1 = self.cleaned_data.get('password')

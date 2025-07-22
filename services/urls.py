@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import service_page
 from services import views as service_views
+from services.views  import tax_form, esewa_success, esewa_failure
 from . import views
 
 urlpatterns = [
@@ -20,6 +21,7 @@ urlpatterns = [
     path('tax/<int:pk>/detail/',    views.tax_detail,         name='tax_detail'),
     path('tax/form/', views.tax_form, name='tax_form'),
     path('tax/esewa/redirect/', views.esewa_redirect, name='esewa_redirect'),
-    path('tax/esewa/success/',  views.esewa_success,  name='esewa_success'),
-    path('tax/esewa/failure/',  views.esewa_failure,  name='esewa_failure'),
+    path('tax/form/',    tax_form,       name='tax_form'),
+    path('tax/success/', esewa_success,  name='esewa_success'),
+    path('tax/failure/', esewa_failure,  name='esewa_failure'),
 ]

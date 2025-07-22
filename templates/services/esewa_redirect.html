@@ -1,23 +1,21 @@
 {# templates/services/esewa_redirect.html #}
-{% extends "base.html" %}
-{% block content %}
-  <div class="container text-center my-5">
-    <p>Redirecting you to eSewa’s test sandbox…</p>
-    <form id="esewa-form"
-          action="https://uat.esewa.com.np/epay/main"
-          method="POST" style="display:none;">
-      <input type="hidden" name="tAmt" value="{{ tAmt }}" />
-      <input type="hidden" name="amt"  value="{{ amt }}" />
-      <input type="hidden" name="psc"  value="{{ psc }}" />
-      <input type="hidden" name="pdc"  value="{{ pdc }}" />
-      <input type="hidden" name="pid"  value="{{ pid }}" />
-      <input type="hidden" name="su"   value="{{ su  }}" />
-      <input type="hidden" name="fu"   value="{{ fu  }}" />
-    </form>
-  </div>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting to eSewa…</title>
+</head>
+<body>
+  <p>Redirecting to eSewa payment gateway… If you’re not redirected automatically, <button onclick="document.forms[0].submit()">click here</button>.</p>
+
+  <form action="{{ endpoint }}" method="POST">
+    {% for name,value in data.items %}
+      <input type="hidden" name="{{ name }}" value="{{ value }}">
+    {% endfor %}
+  </form>
 
   <script>
-    // as soon as this loads, auto-submit into eSewa
-    document.getElementById("esewa-form").submit();
+    document.forms[0].submit();
   </script>
-{% endblock %}
+</body>
+</html>

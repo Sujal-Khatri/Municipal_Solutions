@@ -1,57 +1,64 @@
 {% extends 'base.html' %}
-{% load static %}
 {% load widget_tweaks %}
 
 {% block content %}
 <div class="container my-5">
   <h2 class="mb-4">ITS-I001 Self Assessment Return (D-01)</h2>
+
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <!-- ── Account Setup + Financials (unchanged) ──────────────────── -->
+    {# show any non-field errors (e.g. bad credentials) #}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <!-- ── Account Setup + Financials ────────────────────────────── -->
     <div class="row">
       <div class="col-md-6">
         <!-- Username -->
         <div class="mb-3">
           {{ form.username.label_tag }}
           {{ form.username|add_class:"form-control" }}
-          {% for err in form.username.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.username.errors }}
         </div>
         <!-- Password -->
         <div class="mb-3">
           {{ form.password.label_tag }}
           {{ form.password|add_class:"form-control" }}
-          {% for err in form.password.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.password.errors }}
         </div>
         <!-- Confirm Password -->
         <div class="mb-3">
           {{ form.password2.label_tag }}
           {{ form.password2|add_class:"form-control" }}
-          {% for err in form.password2.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.password2.errors }}
         </div>
         <!-- PAN No. -->
         <div class="mb-3">
           {{ form.pan_no.label_tag }}
           {{ form.pan_no|add_class:"form-control" }}
-          {% for err in form.pan_no.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.pan_no.errors }}
         </div>
         <!-- Fiscal Year -->
         <div class="mb-3">
           {{ form.fiscal_year.label_tag }}
           {{ form.fiscal_year|add_class:"form-control" }}
-          {% for err in form.fiscal_year.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.fiscal_year.errors }}
         </div>
         <!-- Email -->
         <div class="mb-3">
           {{ form.email.label_tag }}
           {{ form.email|add_class:"form-control" }}
-          {% for err in form.email.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.email.errors }}
         </div>
         <!-- Contact No. -->
         <div class="mb-3">
           {{ form.contact_no.label_tag }}
           {{ form.contact_no|add_class:"form-control" }}
-          {% for err in form.contact_no.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.contact_no.errors }}
         </div>
       </div>
       <div class="col-md-6">
@@ -59,13 +66,13 @@
         <div class="mb-3">
           {{ form.turnover_amount.label_tag }}
           {{ form.turnover_amount|add_class:"form-control" }}
-          {% for err in form.turnover_amount.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.turnover_amount.errors }}
         </div>
         <!-- Deduction -->
         <div class="mb-3">
           {{ form.deduction_amount.label_tag }}
           {{ form.deduction_amount|add_class:"form-control" }}
-          {% for err in form.deduction_amount.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.deduction_amount.errors }}
         </div>
         <small class="text-muted d-block mb-3">
           Income, Tax &amp; Penalty will be calculated automatically.
@@ -75,63 +82,62 @@
 
     <hr>
 
-    <!-- ── Payment Entry ─────────────────────────────────────────────── -->
+    <!-- ── Payment Entry ──────────────────────────────────────────── -->
     <div class="row mt-4">
       <div class="col-md-6">
         <h4>Payment Entry</h4>
 
-        <!-- Revenue Account No. (always) -->
+        <!-- Revenue Account No. -->
         <div class="mb-3">
           {{ form.revenue_account_no.label_tag }}
           {{ form.revenue_account_no|add_class:"form-control" }}
-          {% for err in form.revenue_account_no.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.revenue_account_no.errors }}
         </div>
 
         <!-- Payment Type Selector -->
         <div class="mb-3">
           {{ form.payment_type.label_tag }}
           {{ form.payment_type|add_class:"form-control" }}
-          {% for err in form.payment_type.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.payment_type.errors }}
         </div>
 
-        <!-- Bank-only fields (voucher_no + bank_name + receipt) -->
+        <!-- Bank-only details -->
         <div id="bank-details">
           <div class="mb-3">
             {{ form.voucher_no.label_tag }}
             {{ form.voucher_no|add_class:"form-control" }}
-            {% for err in form.voucher_no.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            {{ form.voucher_no.errors }}
           </div>
           <div class="mb-3">
             {{ form.bank_name.label_tag }}
             {{ form.bank_name|add_class:"form-control" }}
-            {% for err in form.bank_name.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            {{ form.bank_name.errors }}
           </div>
           <div class="mb-3">
             {{ form.receipt.label_tag }}
             {{ form.receipt|add_class:"form-control" }}
-            {% for err in form.receipt.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            {{ form.receipt.errors }}
           </div>
         </div>
 
-        <!-- Common fields (always shown) -->
+        <!-- Always shown fields -->
         <div class="mb-3">
           {{ form.deposit_date.label_tag }}
           {{ form.deposit_date|add_class:"form-control" }}
-          {% for err in form.deposit_date.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.deposit_date.errors }}
         </div>
         <div class="mb-3">
           {{ form.deposit_amount.label_tag }}
           {{ form.deposit_amount|add_class:"form-control" }}
-          {% for err in form.deposit_amount.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          {{ form.deposit_amount.errors }}
         </div>
 
-        <!-- Online-only API notice -->
+        <!-- Online-only notice -->
         <div id="online-payment-api" style="display:none;">
           <p class="text-info">
             After clicking “Submit Return,” you’ll be redirected to our test e-banking sandbox.
           </p>
         </div>
-
       </div>
     </div>
 
@@ -141,9 +147,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-  const select     = document.getElementById('id_payment_type');
-  const bankDiv    = document.getElementById('bank-details');
-  const onlineDiv  = document.getElementById('online-payment-api');
+  const select    = document.getElementById('id_payment_type');
+  const bankDiv   = document.getElementById('bank-details');
+  const onlineDiv = document.getElementById('online-payment-api');
 
   function toggleSections(){
     if(select.value === 'bank'){

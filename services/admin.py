@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import DiscussionPost, PostReaction, Notice, Report
+from .models import DiscussionPost, PostReaction, Notice, Report, TaxReturn, SelfAssessmentReturn
 from django.utils.html import format_html
 
 @admin.register(DiscussionPost)
@@ -27,3 +27,18 @@ admin.site.register(PostReaction)
 admin.site.register(Notice)
 
 admin.site.register(Report)
+@admin.register(SelfAssessmentReturn)
+class SelfAssessmentReturnAdmin(admin.ModelAdmin):
+    list_display    = ('submission_no','username','pan_no','created_at','submitted')
+    readonly_fields = ('submission_no','created_at',     )
+@admin.register(TaxReturn)
+class TaxReturnAdmin(admin.ModelAdmin):
+    list_display = (
+      'id',
+      'user',
+      'pan_no',
+      'fiscal_year',
+      'tax_amount',
+      'submitted_at',
+    )
+    readonly_fields = ('submitted_at',)

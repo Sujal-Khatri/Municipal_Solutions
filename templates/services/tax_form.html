@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container my-5">
+  <h2 class="mb-4">ITS-I001 Self Assessment Return (D-01)</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="row">
+      <!-- Account Setup -->
+      <div class="col-md-6">
+        <h4>Account Setup</h4>
+
+        <div class="mb-3">
+          {{ form.username.label_tag }}
+          {{ form.username|add_class:"form-control" }}
+          {% for err in form.username.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.password.label_tag }}
+          {{ form.password|add_class:"form-control" }}
+          {% for err in form.password.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.password2.label_tag }}
+          {{ form.password2|add_class:"form-control" }}
+          {% for err in form.password2.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.pan_no.label_tag }}
+          {{ form.pan_no|add_class:"form-control" }}
+          {% for err in form.pan_no.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.fiscal_year.label_tag }}
+          {{ form.fiscal_year|add_class:"form-control" }}
+          {% for err in form.fiscal_year.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.email.label_tag }}
+          {{ form.email|add_class:"form-control" }}
+          {% for err in form.email.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.contact_no.label_tag }}
+          {{ form.contact_no|add_class:"form-control" }}
+          {% for err in form.contact_no.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Financial Details -->
+      <div class="col-md-6">
+        <h4>Financial Details</h4>
+
+        <div class="mb-3">
+          {{ form.turnover_amount.label_tag }}
+          {{ form.turnover_amount|add_class:"form-control" }}
+          {% for err in form.turnover_amount.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.deduction_amount.label_tag }}
+          {{ form.deduction_amount|add_class:"form-control" }}
+          {% for err in form.deduction_amount.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <small class="text-muted">Income, Tax, Penalty & Total calculated automatically.</small>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Payment Entry -->
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h4>Payment Entry</h4>
+
+        <div class="mb-3">
+          {{ form.revenue_account_no.label_tag }}
+          {{ form.revenue_account_no|add_class:"form-control" }}
+          {% for err in form.revenue_account_no.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.payment_type.label_tag }}
+          {{ form.payment_type|add_class:"form-control" }}
+          {% for err in form.payment_type.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.voucher_no.label_tag }}
+          {{ form.voucher_no|add_class:"form-control" }}
+          {% for err in form.voucher_no.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.bank_name.label_tag }}
+          {{ form.bank_name|add_class:"form-control" }}
+          {% for err in form.bank_name.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.deposit_date.label_tag }}
+          {{ form.deposit_date|add_class:"form-control" }}
+          {% for err in form.deposit_date.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.deposit_amount.label_tag }}
+          {{ form.deposit_amount|add_class:"form-control" }}
+          {% for err in form.deposit_amount.errors %}
+            <div class="text-danger small">{{ err }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-4">Submit Return</button>
+  </form>
+</div>
+{% endblock %}

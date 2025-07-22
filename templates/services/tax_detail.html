@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+  <h2>Return #{{ tax_return.submission_no }}</h2>
+  <ul class="list-group">
+    <li class="list-group-item"><strong>Username:</strong> {{ tax_return.username }}</li>
+    <!-- … repeat for key fields … -->
+    {% if tax_return.receipt %}
+      <li class="list-group-item">
+        <strong>Receipt:</strong>
+        <a href="{{ tax_return.receipt.url }}" target="_blank">Download</a>
+      </li>
+    {% endif %}
+  </ul>
+</div>
+{% endblock %}

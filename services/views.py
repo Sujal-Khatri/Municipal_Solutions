@@ -1,10 +1,11 @@
 import os
 from django.shortcuts import render
+from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-from .models import DiscussionPost, PostReaction, Notice, Report
-from .forms import DiscussionPostForm
+from .models import DiscussionPost, PostReaction, Notice, Report, SelfAssessmentReturn
+from .forms import DiscussionPostForm, SelfAssessmentReturnForm
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
@@ -66,17 +67,13 @@ def reports(request):
     return render(request, 'services/reports.html', {'reports': all_reports})
 
 def discussions(request):
-    # 1️⃣ Grab the GET parameter
     cat = request.GET.get('category')
 
-    # 2️⃣ Start with all posts
     qs = DiscussionPost.objects.all()
 
-    # 3️⃣ If it’s one of our three choices, filter by it
     if cat in dict(DiscussionPost.CATEGORY_CHOICES):
         qs = qs.filter(category=cat)
 
-    # 4️⃣ Order and render
     posts = qs.order_by('-created_at')
     return render(request, 'services/discussions.html', {
         'posts': posts,
@@ -85,7 +82,7 @@ def discussions(request):
 
 def post_detail(request, pk):
     post = get_object_or_404(DiscussionPost, pk=pk)
-     # 🧪 DEBUG PRINT — confirm location field
+     # confirm location field
     print("Location from DB:", post.location)
     user_reaction = None
     if request.user.is_authenticated:
@@ -98,7 +95,7 @@ def service_page(request):
     services = [
         {"title": "Public Construction Department", "desc": "","url": "https://kathmandu.gov.np/wp-content/uploads/2023/02/%E0%A4%B8%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%B5%E0%A4%9C%E0%A4%A8%E0%A4%BF%E0%A4%95-%E0%A4%A8%E0%A4%BF%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%BE%E0%A4%A3-%E0%A4%B5%E0%A4%BF%E0%A4%AD%E0%A4%BE%E0%A4%97.pdf"},
         {"title": "Free health services", "desc": "","url": "https://freehealth.kathmandu.gov.np/home/"},
-        {"title": "Tax Payment", "desc": "","url": "https://eservice.kathmandu.gov.np/"},
+        {"title": "Tax Payment",                    "desc": "",     "url": reverse('tax_form')},
         {"title": "Public Parks", "desc": "Find parks, facilities, and events near you.","url": "https://www.google.com/maps/search/public+parks+in+kathmandu/@27.7181811,85.2762222,27678m/data=!3m1!1e3?entry=ttu&g_ep=EgoyMDI1MDYzMC4wIKXMDSoASAFQAw%3D%3D"},
         {"title": "Education Department", "desc": "","url": "https://kathmandu.gov.np/wp-content/uploads/2023/02/%E0%A4%B6%E0%A4%BF%E0%A4%95%E0%A5%8D%E0%A4%B7%E0%A4%BE-%E0%A4%B5%E0%A4%BF%E0%A4%AD%E0%A4%BE%E0%A4%97-%E0%A4%A8%E0%A4%BE%E0%A4%97%E0%A4%B0%E0%A4%BF%E0%A4%95-%E0%A4%B5%E0%A4%A1%E0%A4%BE%E0%A4%AA%E0%A4%A4%E0%A5%8D%E0%A4%B0.pdf"},
         {"title": "Permit Applications", "desc": "Apply for permits for events, businesses, and construction."}
@@ -158,3 +155,41 @@ def like_post(request, pk):
         post.save()
 
     return redirect('post_detail', pk=pk)
+
+#for tax
+
+@login_required
+def tax_form(request):
+    if request.method == 'POST':
+        form = SelfAssessmentReturnForm(request.POST or None, request.FILES or None)
+        if form.is_valid():
+            tax_return = form.save(commit=False)
+            tax_return.user = request.user
+            tax_return.save()
+            return render(request, 'services/tax_success.html', {
+                'return': tax_return
+            })
+    else:
+        form = SelfAssessmentReturnForm()
+
+    return render(request, 'services/tax_form.html', {
+        'form': form
+    })
+
+@login_required
+def tax_receipt_upload(request, pk):
+    tr = SelfAssessmentReturn.objects.get(submission_no=pk)
+    if request.method == 'POST':
+        tr.receipt = request.FILES['receipt']
+        tr.save()
+        return redirect('tax_detail', pk=pk)
+    return render(request, 'services/tax_receipt_upload.html', {
+        'tax_return': tr,
+    })
+
+@login_required
+def tax_detail(request, pk):
+    tr = SelfAssessmentReturn.objects.get(submission_no=pk)
+    return render(request, 'services/tax_detail.html', {
+        'tax_return': tr,
+    })

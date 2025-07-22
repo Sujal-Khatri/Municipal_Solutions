@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5 text-center">
+  <h2 class="text-success">Return Submitted!</h2>
+  <p>Your self-assessment has been received. Your reference number is <strong>#{{ return_id }}</strong>.</p>
+  <a href="{% url 'home' %}" class="btn btn-primary mt-3">Back to Home</a>
+</div>
+{% endblock %}

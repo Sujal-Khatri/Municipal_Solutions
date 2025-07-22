@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+  <h2>Upload Payment Receipt for Return #{{ tax_return.submission_no }}</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="id_receipt" class="form-label">Receipt File</label>
+      <input type="file" name="receipt" id="id_receipt" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-success">Upload</button>
+  </form>
+</div>
+{% endblock %}

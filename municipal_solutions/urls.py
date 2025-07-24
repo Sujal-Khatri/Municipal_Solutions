@@ -24,6 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('', include('services.urls')),
+    path('tax/form/', service_views.tax_form,    name='tax_form'),
+    path('tax/success/<int:reference>/', service_views.tax_success, name='tax_success'),
     path('gallery/left/', service_views.gallery_left, name='gallery_left'),
     path('gallery/right/', service_views.gallery_right, name='gallery_right'),
     

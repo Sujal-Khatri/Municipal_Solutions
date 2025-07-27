@@ -1,26 +1,49 @@
 /* static/css/style.css */
+/* 1) CSS Variables */
+:root {
+  --primary:             #004080;
+  --secondary:           #0066cc;
+  --light-bg:            #f8f9fa;
+  --text:                #212529;
+  --seal-opacity:        0.40;
+  --transition:          0.2s ease;
+  --border-radius:       0.5rem;
+  --card-shadow:         0 2px 6px rgba(0,0,0,0.1);
+}
 
-/* 1) Navbar gradient background */
+/* 2) Global reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin:     0;
+  padding:    0;
+}
+
+/* 3) Base typography & layout */
+body {
+  font-family: 'Inter', sans-serif;
+  background:  var(--light-bg);
+  color:       var(--text);
+  line-height: 1.6;
+}
+
+/* 4) Navbar */
 .navbar {
-  background: linear-gradient(90deg, #004080, #0066cc);
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  box-shadow: var(--card-shadow);
 }
-
-/* 2) Logo sizing & spacing */
 .navbar-brand img {
-  height: 32px;      /* fits most navbars */
-  margin-right: 8px;
+  height:       32px;
+  margin-right: 0.5rem;
 }
-
-/* 3) Make nav-links pop on hover */
 .nav-link {
-  transition: background-color 0.2s, color 0.2s;
+  transition: background-color var(--transition), color var(--transition);
 }
 .nav-link:hover {
   background-color: rgba(255,255,255,0.15);
-  border-radius: 4px;
+  border-radius:   4px;
 }
-
-/* 4) Toggler button color (for mobile) */
 .navbar-toggler {
   border-color: rgba(255,255,255,0.7);
 }
@@ -28,55 +51,55 @@
   filter: invert(1);
 }
 
-/* Home-page cards as formal government cards */
-
-/* common card wrapper */
+/* 5) Home-page cards */
 .home-card {
-  position: relative;
-  overflow: hidden;
-  background-color: #fff;
-  border: 1px solid #dee2e6;
-  transition: transform 0.2s ease;
+  background:       #fff;
+  border:           1px solid #dee2e6;
+  border-radius:    var(--border-radius);
+  box-shadow:       var(--card-shadow);
+  overflow:         hidden;
+  position:         relative;
+  transition:       transform var(--transition);
 }
 .home-card:hover {
   transform: scale(1.02);
 }
-
-/* watermark seal behind everything */
 .home-card::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background-image: url("../css/img/mahanagarpalika.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.40;      
-  z-index: 1;
+  inset:    0;
+  background: url("../css/img/mahanagarpalika.png") center/contain no-repeat;
+  opacity:    var(--seal-opacity);
+  z-index:    1;
 }
-
-/* ensure your content sits above it */
 .home-card .card-body {
   position: relative;
-  z-index: 2;
-  color: #212529;     
+  z-index:   2;
 }
-
-/* formal title styling */
 .home-card .card-title {
-  color: #004080;     /
-  font-weight: 600;
+  color:        var(--primary);
+  font-weight:  600;
   margin-bottom: 0.75rem;
 }
-
-/* normal body text */
 .home-card .card-text {
-  color: #030408;
   margin-bottom: 1rem;
 }
-
-/* keep buttons standard bootstrap blue */
 .home-card .btn {
-  width: 100%;
+  width:       100%;
   font-weight: 500;
+}
+
+/* 6) Footer */
+.footer {
+  background-color: var(--primary);
+  color:            #fff;
+  text-align:       center;
+  padding:          2rem 0;
+  margin-top:       4rem;
+}
+.footer a {
+  color: #ffc107;
+}
+.footer a:hover {
+  color: #e0a800;
 }
